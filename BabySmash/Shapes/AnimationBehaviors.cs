@@ -78,14 +78,14 @@ non-infringement.
 using System;
 using System.IO;
 using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Data;
+using Avalonia.Media;
+using Avalonia.Media.Animation;
+using Avalonia.Navigation;
 using System.Collections.Generic;
-using System.Windows.Threading;
+using Avalonia.Threading;
 
 namespace AnimationBehaviors
 {
@@ -1343,8 +1343,8 @@ namespace AnimationBehaviors
                     return;
 
                 //use Click if it's a button, otherwise use MouseUp
-                System.Windows.Controls.Primitives.ButtonBase button =
-                    element as System.Windows.Controls.Primitives.ButtonBase;
+                Avalonia.Controls.Primitives.ButtonBase button =
+                    element as Avalonia.Controls.Primitives.ButtonBase;
                 if (button != null)
                 {
                     //use click handler

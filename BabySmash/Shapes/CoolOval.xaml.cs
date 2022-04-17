@@ -1,8 +1,8 @@
 ﻿namespace BabySmash
 {
     using System;
-    using System.Windows;
-    using System.Windows.Media;
+    using Avalonia;
+    using Avalonia.Media;
 
     /// <summary>   
     /// Interaction logic for CoolOval.xaml

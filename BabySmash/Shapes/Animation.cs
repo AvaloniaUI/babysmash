@@ -1,7 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Effects;
+﻿using Avalonia;
+using Avalonia.Media;
+using Avalonia.Media.Animation;
+using Avalonia.Media.Effects;
 
 namespace BabySmash
 {

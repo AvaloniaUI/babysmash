@@ -6,18 +6,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interop;
+using Avalonia.Media;
+using Avalonia.Media.Animation;
+using Avalonia.Shapes;
+using Avalonia.Threading;
 using BabySmash.Properties;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-using WinForms = System.Windows.Forms;
+using KeyEventArgs = Avalonia.Input.KeyEventArgs;
+using MouseEventArgs = Avalonia.Input.MouseEventArgs;
+using WinForms = Avalonia.Forms;
 
 namespace BabySmash
 {
@@ -409,7 +409,7 @@ namespace BabySmash
         /// </summary>
         public static string GetLocalizedString(string key)
         {
-            CultureInfo keyboardLanguage = System.Windows.Forms.InputLanguage.CurrentInputLanguage.Culture;
+            CultureInfo keyboardLanguage = Avalonia.Forms.InputLanguage.CurrentInputLanguage.Culture;
             string culture = keyboardLanguage.Name;
             string path = $@"Resources\Strings\{culture}.json";
             string path2 = @"Resources\Strings\en-EN.json";
@@ -457,7 +457,7 @@ namespace BabySmash
             public ThreadedSpeak(string Word)
             {
                 this.Word = Word;
-                CultureInfo keyboardLanguage = System.Windows.Forms.InputLanguage.CurrentInputLanguage.Culture;
+                CultureInfo keyboardLanguage = Avalonia.Forms.InputLanguage.CurrentInputLanguage.Culture;
                 InstalledVoice neededVoice = this.SpeechSynth.GetInstalledVoices(keyboardLanguage).FirstOrDefault();
                 if (neededVoice == null)
                 {
@@ -532,7 +532,7 @@ namespace BabySmash
                 if (result == MessageBoxResult.Yes)
                 {
                     Application.Current.Shutdown();
-                    System.Windows.Forms.Application.Restart();
+                    Avalonia.Forms.Application.Restart();
                 }
             }
         }

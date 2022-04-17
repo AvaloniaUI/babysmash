@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Media;
 
 namespace BabySmash
 {
@@ -93,7 +93,7 @@ namespace BabySmash
             return lRandom.Next(min, max + 1);
         }
 
-        internal static System.Windows.Controls.UserControl GetCursor()
+        internal static Avalonia.Controls.UserControl GetCursor()
         {
             switch (Properties.Settings.Default.CursorType)
             {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Effects;
-using BrushControlFunc = System.Func<System.Windows.Media.Brush, System.Windows.Controls.UserControl>;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
+using Avalonia.Media.Effects;
+using BrushControlFunc = System.Func<Avalonia.Media.Brush, Avalonia.Controls.UserControl>;
 using BabySmash.Properties;
 using BabySmash.Shapes;
 

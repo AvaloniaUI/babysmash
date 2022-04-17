@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Media;
 using BabySmash.Properties;
 
 namespace BabySmash

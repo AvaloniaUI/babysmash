@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Forms;
-using Application = System.Windows.Application;
-using WinForms = System.Windows.Forms;
+using Avalonia;
+using Avalonia.Forms;
+using Application = Avalonia.Application;
+using WinForms = Avalonia.Forms;
 
 namespace BabySmash
 {

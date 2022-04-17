@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Deployment.Application;
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Input;
+using Avalonia;
+using Avalonia.Input;
 using BabySmash.Properties;
 
 namespace BabySmash
@@ -49,7 +49,7 @@ namespace BabySmash
             base.OnMouseMove(e);
         }
 
-        protected override void OnKeyUp(System.Windows.Input.KeyEventArgs e)
+        protected override void OnKeyUp(Avalonia.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {

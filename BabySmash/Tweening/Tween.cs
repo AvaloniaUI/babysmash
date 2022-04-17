@@ -1,8 +1,8 @@
 ﻿namespace Tweener
 {
     using System;
-    using System.Windows;
-    using System.Windows.Media.Animation;
+    using Avalonia;
+    using Avalonia.Media.Animation;
 
     /// <summary>
     /// Provides the implementation of tween attached properties.
