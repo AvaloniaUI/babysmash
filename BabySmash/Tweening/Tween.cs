@@ -7,7 +7,7 @@
     /// <summary>
     /// Provides the implementation of tween attached properties.
     /// </summary>
-    public static class Tween
+    public class Tween : AvaloniaObject
     {
         /// <summary>
         /// The default number of keyframes to generate per second.
@@ -17,31 +17,31 @@
         /// <summary>
         /// Defines the tween transition type.
         /// </summary>
-        public static readonly DependencyProperty TransitionTypeProperty =
-            DependencyProperty.RegisterAttached("TransitionType", typeof(TransitionType), typeof(Tween), new PropertyMetadata(OnTweenChanged));
+        public static readonly AvaloniaProperty TransitionTypeProperty =
+            AvaloniaProperty.RegisterAttached("TransitionType", typeof(TransitionType), typeof(Tween), new PropertyMetadata(OnTweenChanged));
 
         /// <summary>
         /// Defines the source value of a tween double animation.
         /// </summary>
-        public static readonly DependencyProperty FromProperty =
-            DependencyProperty.RegisterAttached("From", typeof(double), typeof(Tween), new PropertyMetadata(OnTweenChanged));
+        public static readonly AvaloniaProperty FromProperty =
+            AvaloniaProperty.RegisterAttached("From", typeof(double), typeof(Tween), new PropertyMetadata(OnTweenChanged));
 
         /// <summary>
         /// Defines the target value of a tween double animation.
         /// </summary>
-        public static readonly DependencyProperty ToProperty =
-            DependencyProperty.RegisterAttached("To", typeof(double), typeof(Tween), new PropertyMetadata(OnTweenChanged));
+        public static readonly AvaloniaProperty ToProperty =
+            AvaloniaProperty.RegisterAttached("To", typeof(double), typeof(Tween), new PropertyMetadata(OnTweenChanged));
 
         /// <summary>
         /// The frames-per-second attached property.
         /// </summary>
         /// <remarks>The FPS attached property defines the number of keyframes to generate per second.</remarks>
-        public static readonly DependencyProperty FpsProperty =
-            DependencyProperty.RegisterAttached("Fps", typeof(double), typeof(Tween), new PropertyMetadata(OnTweenChanged));
+        public static readonly AvaloniaProperty FpsProperty =
+            AvaloniaProperty.RegisterAttached("Fps", typeof(double), typeof(Tween), new PropertyMetadata(OnTweenChanged));
 
         private delegate double Equation(params double[] args);
 
-        private static void OnTweenChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static void OnTweenChanged(AvaloniaObject o, AvaloniaPropertyChangedEventArgs e)
         {
             DoubleAnimationUsingKeyFrames animation = o as DoubleAnimationUsingKeyFrames;
 
@@ -121,7 +121,7 @@
         /// </summary>
         /// <param name="o">The o.</param>
         /// <returns></returns>
-        public static TransitionType GetTransitionType(DependencyObject o)
+        public static TransitionType GetTransitionType(AvaloniaObject o)
         {
             return (TransitionType)o.GetValue(TransitionTypeProperty);
         }
@@ -131,7 +131,7 @@
         /// </summary>
         /// <param name="o">The o.</param>
         /// <param name="value">The value.</param>
-        public static void SetTransitionType(DependencyObject o, TransitionType value)
+        public static void SetTransitionType(AvaloniaObject o, TransitionType value)
         {
             o.SetValue(TransitionTypeProperty, value);
         }
@@ -141,7 +141,7 @@
         /// </summary>
         /// <param name="o">The o.</param>
         /// <returns></returns>
-        public static double GetFrom(DependencyObject o)
+        public static double GetFrom(AvaloniaObject o)
         {
             return (double)o.GetValue(FromProperty);
         }
@@ -151,7 +151,7 @@
         /// </summary>
         /// <param name="o">The o.</param>
         /// <param name="value">The value.</param>
-        public static void SetFrom(DependencyObject o, double value)
+        public static void SetFrom(AvaloniaObject o, double value)
         {
             o.SetValue(FromProperty, value);
         }
@@ -161,7 +161,7 @@
         /// </summary>
         /// <param name="o">The o.</param>
         /// <returns></returns>
-        public static double GetTo(DependencyObject o)
+        public static double GetTo(AvaloniaObject o)
         {
             return (double)o.GetValue(ToProperty);
         }
@@ -171,7 +171,7 @@
         /// </summary>
         /// <param name="o">The o.</param>
         /// <param name="value">The value.</param>
-        public static void SetTo(DependencyObject o, double value)
+        public static void SetTo(AvaloniaObject o, double value)
         {
             o.SetValue(ToProperty, value);
         }
@@ -180,7 +180,7 @@
         /// Gets the number of keyframes to generate per second.
         /// </summary>
         /// <param name="o">The o.</param>
-        public static double GetFps(DependencyObject o)
+        public static double GetFps(AvaloniaObject o)
         {
             return (double)o.GetValue(FpsProperty);
         }
@@ -190,7 +190,7 @@
         /// </summary>
         /// <param name="o">The o.</param>
         /// <param name="value">The value.</param>
-        public static void SetFps(DependencyObject o, double value)
+        public static void SetFps(AvaloniaObject o, double value)
         {
             o.SetValue(FpsProperty, value);
         }

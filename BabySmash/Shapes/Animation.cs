@@ -57,7 +57,7 @@ namespace BabySmash
         }
 
         public static Storyboard CreateDPAnimation(FrameworkElement container, UIElement shape,
-                                                   DependencyProperty dp, Duration duration, double from, double to)
+                                                   AvaloniaProperty dp, Duration duration, double from, double to)
         {
             var st = new Storyboard();
             NameScope.SetNameScope(container, new NameScope());
