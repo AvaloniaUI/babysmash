@@ -114,7 +114,7 @@ namespace BabySmash
             }
         }
 
-        private void Properties_Executed(object sender, ExecutedRoutedEventArgs e)
+        public void Properties_Executed()
         {
             controller.ShowOptionsDialog();
         }
