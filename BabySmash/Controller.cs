@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Shapes;
-using Avalonia.Input; 
-using Avalonia.Media; 
+using Avalonia.Input;
+using Avalonia.Media;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using BabySmash.Properties;
 
@@ -20,7 +23,7 @@ namespace BabySmash
 
         public bool isOptionsDialogShown { get; set; }
         private bool isDrawing = false;
-        
+
         // TODO: Disabled Speech features since it's not cross platform compatible as well.
         // private readonly SpeechSynthesizer objSpeech = new SpeechSynthesizer();
         private readonly List<MainWindow> windows = new List<MainWindow>();
@@ -28,8 +31,8 @@ namespace BabySmash
         private DispatcherTimer timer = new DispatcherTimer();
         private Queue<Shape> ellipsesQueue = new Queue<Shape>();
 
-        // private Dictionary<string, List<UserControl>> figuresUserControlQueue =
-        //     new Dictionary<string, List<UserControl>>();
+        private Dictionary<string, List<UserControl>> figuresUserControlQueue =
+            new Dictionary<string, List<UserControl>>();
 
         // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
         // private ApplicationDeployment deployment = null;
@@ -108,7 +111,7 @@ namespace BabySmash
                     Debug.WriteLine(e.ToString());
                 }
             }*/
- 
+
             var dummyWindow = new Window();
 
             foreach (var s in dummyWindow.Screens.All)
@@ -129,8 +132,10 @@ namespace BabySmash
                     Controller = this,
                     DataContext = this
                 };
+                var windowName = $"Window{Number++}";
+                m.Classes.Add(windowName);
 
-                // figuresUserControlQueue[m.Name] = new List<UserControl>();
+                figuresUserControlQueue[windowName] = new List<UserControl>();
 
                 if (windows.Count == 0)
                 {
@@ -138,12 +143,15 @@ namespace BabySmash
                 }
 
                 m.Show();
-                
+
                 m.PointerPressed += HandleMouseLeftButtonDown;
                 m.PointerWheelChanged += HandleMouseWheel;
 
                 windows.Add(m);
             }
+
+            dummyWindow.Close();
+            dummyWindow = null;
 
             //Only show the info label on the FIRST monitor.
             windows[0].infoLabel.IsVisible = true;
@@ -209,46 +217,51 @@ namespace BabySmash
             //     return '*';
             // }
         }
- 
+
         private void AddFigure(Control uie, char c)
         {
-            //  
-            // FigureTemplate template = FigureGenerator.GenerateFigureTemplate(c);
-            // foreach (MainWindow window in this.windows)
-            // {
-            //     UserControl f = FigureGenerator.NewUserControlFrom(template);
-            //     window.AddFigure(f);
-            //
-            //     var queue = figuresUserControlQueue[window.Name];
-            //     queue.Add(f);
-            //
-            //     // Letters should already have accurate width and height, but others may them assigned.
-            //     if (double.IsNaN(f.Width) || double.IsNaN(f.Height))
-            //     {
-            //         f.Width = 300;
-            //         f.Height = 300;
-            //     }
-            //
-            //     Canvas.SetLeft(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Width - f.Width)));
-            //     Canvas.SetTop(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Height - f.Height)));
-            //
-            //     Storyboard storyboard = Animation.CreateDPAnimation(uie, f,
-            //         UIElement.OpacityProperty,
-            //         new Duration(TimeSpan.FromSeconds(Settings.Default.FadeAfter)), 1, 0);
-            //     if (Settings.Default.FadeAway) storyboard.Begin(uie);
-            //
-            //     IHasFace face = f as IHasFace;
-            //     if (face != null)
-            //     {
-            //         face.IsFaceVisible = Settings.Default.FacesOnShapes;
-            //     }
-            //
-            //     if (queue.Count > Settings.Default.ClearAfter)
-            //     {
-            //         window.RemoveFigure(queue[0]);
-            //         queue.RemoveAt(0);
-            //     }
-            // }
+            var template = FigureGenerator.GenerateFigureTemplate(c);
+            foreach (MainWindow window in this.windows)
+            {
+                var f = FigureGenerator.NewUserControlFrom(template);
+                f.Classes.Add("shapes");
+
+                window.AddFigure(f);
+
+                var queue = figuresUserControlQueue[window.Classes.First()];
+                queue.Add(f);
+
+                // Letters should already have accurate width and height, but others may them assigned.
+                if (double.IsNaN(f.Width) || double.IsNaN(f.Height))
+                {
+                    f.Width = 300;
+                    f.Height = 300;
+                }
+
+                f.ClipToBounds = false;
+
+                Canvas.SetLeft(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Width - f.Width)));
+                Canvas.SetTop(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Height - f.Height)));
+
+                // Storyboard storyboard = Animation.CreateDPAnimation(uie, f,
+                //     UIElement.OpacityProperty,
+                //     new Duration(TimeSpan.FromSeconds(Settings.Default.FadeAfter)), 1, 0);
+ 
+                if (Settings.Default.FadeAway)
+                {
+                    f.Classes.Add("fadeAfter");
+                }
+                
+                if (f is IHasFace face)
+                {
+                    face.IsFaceVisible = Settings.Default.FacesOnShapes;
+                }
+
+                if (queue.Count <= Settings.Default.ClearAfter) continue;
+
+                window.RemoveFigure(queue[0]);
+                queue.RemoveAt(0);
+            }
             //
             // // Find the last word typed, if applicable.
             // string lastWord = this.wordFinder.LastWord(figuresUserControlQueue.Values.First());
@@ -326,7 +339,7 @@ namespace BabySmash
             {
                 PlayLaughter();
             }
-            
+
             // TODO: Disabled Speech features since it's not cross platform compatible as well.
             /*
             if (objSpeech != null && Settings.Default.Sounds == "Speech")
@@ -348,18 +361,22 @@ namespace BabySmash
         public static string GetLocalizedString(string key)
         {
             var keyboardLanguage = CultureInfo.CurrentCulture;
-            
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+
             string culture = keyboardLanguage.Name;
-            string path = $@"Resources\Strings\{culture}.json";
-            string path2 = @"Resources\Strings\en-EN.json";
+            var path = new Uri($@"avares://BabySmash/Resources/Strings/{culture}.json");
+            var path2 = new Uri($@"avares://BabySmash/Resources/Strings/en-EN.json");
+
             string jsonConfig = null;
-            if (File.Exists(path))
+            if (assets.Exists(path))
             {
-                jsonConfig = File.ReadAllText(path);
+                using var s = new StreamReader(assets.Open(path));
+                jsonConfig = s.ReadToEnd();
             }
-            else if (File.Exists(path2))
+            else if (assets.Exists(path2))
             {
-                jsonConfig = File.ReadAllText(path2);
+                using var s = new StreamReader(assets.Open(path2));
+                jsonConfig = s.ReadToEnd();
             }
 
             if (jsonConfig != null)

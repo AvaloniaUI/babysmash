@@ -23,5 +23,16 @@
         </Style.Animations>
     </Style>
 
-    <!-- Add Styles Here -->
+    <Style Selector=":is(Control).shapes">
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:1" Delay="0:0:3" />
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:1" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector=":is(Control).fadeAfter">
+        <Setter Property="Opacity" Value="0" />
+    </Style>
 </Styles>

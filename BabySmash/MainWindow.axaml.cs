@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
 
 namespace BabySmash
 {
@@ -73,13 +74,13 @@ namespace BabySmash
         //     }
         //     controller.MouseMove(this, e);
         // }
-        //
-        // protected override void OnKeyUp(KeyEventArgs e)
-        // {
-        //     base.OnKeyUp(e);
-        //     e.Handled = true;
-        //     controller.ProcessKey(this, e);
-        // }
+
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            base.OnKeyUp(e);
+            e.Handled = true;
+            Controller.ProcessKey(this, e);
+        }
         //
         // protected override void OnLostMouseCapture(MouseEventArgs e)
         // {
