@@ -22,7 +22,7 @@ namespace BabySmash.Properties
 
         public bool FacesOnShapes { get; set; } = true;
 
-        public string Sounds { get; set; } = "Speech";
+        public string Sounds { get; set; } = "Laughter";
 
         public string CursorType { get; set; } = "Hand";
 
