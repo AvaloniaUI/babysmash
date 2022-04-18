@@ -184,7 +184,7 @@ namespace BabySmash
             }
         }
 
-        public void ProcessKey(FrameworkElement uie, KeyEventArgs e)
+        public void ProcessKey(Control uie, KeyEventArgs e)
         {
             if (uie.IsMouseCaptured)
             {
@@ -276,7 +276,7 @@ namespace BabySmash
             return ch;
         }
 
-        private void AddFigure(FrameworkElement uie, char c)
+        private void AddFigure(Control uie, char c)
         {
             FigureTemplate template = FigureGenerator.GenerateFigureTemplate(c);
             foreach (MainWindow window in this.windows)
@@ -294,8 +294,8 @@ namespace BabySmash
                     f.Height = 300;
                 }
 
-                Canvas.SetLeft(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.ActualWidth - f.Width)));
-                Canvas.SetTop(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.ActualHeight - f.Height)));
+                Canvas.SetLeft(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Width - f.Width)));
+                Canvas.SetTop(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Height - f.Height)));
 
                 Storyboard storyboard = Animation.CreateDPAnimation(uie, f,
                                 UIElement.OpacityProperty,
