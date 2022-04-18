@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Media.Effects;
 using BrushControlFunc = System.Func<Avalonia.Media.Brush, Avalonia.Controls.UserControl>;
 using BabySmash.Properties;
 using BabySmash.Shapes;

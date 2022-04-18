@@ -1,4 +1,6 @@
-﻿namespace BabySmash
+﻿using Avalonia.Controls;
+
+namespace BabySmash
 {
     using System;
     using Avalonia;
@@ -8,7 +10,7 @@
     /// Interaction logic for CoolOval.xaml
     /// </summary>
     [Serializable]
-    public partial class CoolOval : IHasFace
+    public partial class CoolOval : UserControl, IHasFace
     {
         public CoolOval(Brush x) : this()
         {
@@ -20,16 +22,6 @@
             this.InitializeComponent();
         }
         
-        public Visibility FaceVisible
-        {
-            get
-            {
-                return Face.Visibility;
-            }
-            set
-            {
-                Face.Visibility = value;
-            }
-        }
+        public bool IsFaceVisible { get; set; }
     }
 }

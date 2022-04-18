@@ -20,16 +20,6 @@ namespace BabySmash
             this.InitializeComponent();
         }
         
-        public Visibility FaceVisible
-        {
-            get
-            {
-                return Face.Visibility;
-            }
-            set
-            {
-                Face.Visibility = value;
-            }
-        }
+        public bool IsFaceVisible { get; set; }
     }
 }

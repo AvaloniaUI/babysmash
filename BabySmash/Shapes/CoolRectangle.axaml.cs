@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 
 namespace BabySmash
@@ -8,8 +9,10 @@ namespace BabySmash
     /// Interaction logic for CoolSquare.xaml
     /// </summary>
     [Serializable]
-    public partial class CoolRectangle : IHasFace
+    public partial class CoolRectangle : UserControl, IHasFace
     {
+        private bool isFaceVisible;
+
         public CoolRectangle(Brush x) : this()
         {
             this.Body.Fill = x;
@@ -19,17 +22,7 @@ namespace BabySmash
         {
             this.InitializeComponent();
         }
-        
-        public Visibility FaceVisible
-        {
-            get
-            {
-                return Face.Visibility;
-            }
-            set
-            {
-                Face.Visibility = value;
-            }
-        }
+         
+        public bool IsFaceVisible { get; set; }
     }
 }

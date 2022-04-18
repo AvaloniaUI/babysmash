@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 
 namespace BabySmash
@@ -8,8 +9,10 @@ namespace BabySmash
     /// Interaction logic for CoolCircle.xaml
     /// </summary>
     [Serializable]
-    public partial class CoolCircle : IHasFace
+    public partial class CoolCircle : UserControl, IHasFace
     {
+        private bool isFaceVisible;
+
         public CoolCircle(Brush x) : this()
         {
             this.Body.Fill = x;
@@ -19,17 +22,8 @@ namespace BabySmash
         {
             this.InitializeComponent();
         }
-        
-        public Visibility FaceVisible
-        {
-            get
-            {
-                return Face.Visibility;
-            }
-            set
-            {
-                Face.Visibility = value;
-            }
-        }
+         
+        /// <inheritdoc />
+        public bool IsFaceVisible { get; set; }
     }
 }

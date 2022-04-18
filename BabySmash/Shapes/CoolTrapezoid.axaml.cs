@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 
 namespace BabySmash
@@ -8,7 +9,7 @@ namespace BabySmash
     /// Interaction logic for CoolTrapezoid.xaml
     /// </summary>
     [Serializable]
-    public partial class CoolTrapezoid : IHasFace
+    public partial class CoolTrapezoid : UserControl, IHasFace
     {
         public CoolTrapezoid(Brush x) : this()
         {
@@ -20,16 +21,6 @@ namespace BabySmash
             this.InitializeComponent();
         }
         
-        public Visibility FaceVisible
-        {
-            get
-            {
-                return Face.Visibility;
-            }
-            set
-            {
-                Face.Visibility = value;
-            }
-        }
+        public bool IsFaceVisible { get; set; }
     }
 }

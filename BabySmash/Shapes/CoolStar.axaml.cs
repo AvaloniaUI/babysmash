@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 
 namespace BabySmash
@@ -8,7 +9,7 @@ namespace BabySmash
     /// Interaction logic for CoolStar.xaml
     /// </summary>
     [Serializable]
-    public partial class CoolStar : IHasFace
+    public partial class CoolStar : UserControl, IHasFace
     {
         public CoolStar(Brush x) : this()
         {
@@ -20,16 +21,6 @@ namespace BabySmash
             this.InitializeComponent();
         }
         
-        public Visibility FaceVisible
-        {
-            get
-            {
-                return Face.Visibility;
-            }
-            set
-            {
-                Face.Visibility = value;
-            }
-        }
+        public bool IsFaceVisible { get; set; }
     }
 }

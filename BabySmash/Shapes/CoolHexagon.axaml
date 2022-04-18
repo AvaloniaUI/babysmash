@@ -6,29 +6,12 @@
 	mc:Ignorable="d"
 	x:Class="BabySmash.CoolHexagon"
 	x:Name="UserControl"
-	d:DesignWidth="6.666" d:DesignHeight="10">
-    <UserControl.Resources>
-        <Storyboard x:Key="Eyes">
-            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Eyes" Storyboard.TargetProperty="(UIElement.Opacity)" RepeatBehavior="Forever">
-                <SplineDoubleKeyFrame KeyTime="00:00:02.1000000" Value="1"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:02.1000000" Value="0"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:02.300000" Value="0"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:02.300000" Value="1"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:7.300000" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-    </UserControl.Resources>
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource Eyes}"/>
-        </EventTrigger>
-    </UserControl.Triggers>
-
-    <Grid x:Name="LayoutRoot">
+	d:DesignWidth="6.666" d:DesignHeight="10"> 
+	<Grid x:Name="LayoutRoot">
 		<Canvas x:Name="Hexagon">
-			<Path  x:Name="Body" StrokeThickness="10" Stroke="#ff000000" StrokeMiterLimit="1" Data="F1 M 61.853516,199.267578 L 5.773438,102.133789 L 61.853516,5 L 174.013672,5 L 230.093750,102.133789 L 174.013672,199.267578 L 61.853516,199.267578 Z">
+			<Path  x:Name="Body" StrokeThickness="10" Stroke="#ff000000" Data="F1 M 61.853516,199.267578 L 5.773438,102.133789 L 61.853516,5 L 174.013672,5 L 230.093750,102.133789 L 174.013672,199.267578 L 61.853516,199.267578 Z">
 				<Path.Fill>
-					<RadialGradientBrush MappingMode="Absolute" GradientOrigin="664.333008,431.5" Center="664.333008,431.5" RadiusX="104.916328" RadiusY="104.916328">
+					<RadialGradientBrush GradientOrigin="664.333008,431.5" Center="664.333008,431.5" Radius="104.916328">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-546.399414,533.633789" />
 						</RadialGradientBrush.Transform>
@@ -38,7 +21,7 @@
 				</Path.Fill>
 			</Path>
             <Canvas x:Name="Face">
-                <Canvas x:Name="Eyes">
+                <Canvas x:Name="Eyes" Classes="BlinkingEye">
                     <Path Fill="#ff000000" Data="F1 M 100.433594,88.735352 C 103.952148,88.735352 107.389648,89.074707 110.728516,89.693848 L 110.728516,58.061035 C 110.728516,55.126465 108.349609,52.747070 105.414063,52.747070 L 95.451172,52.747070 C 92.517578,52.747070 90.138672,55.126465 90.138672,58.061035 L 90.138672,89.693848 C 93.477539,89.074707 96.915039,88.735352 100.433594,88.735352 Z"/>
                     <Path Fill="#ff000000" Data="F1 M 135.433594,88.735352 C 138.952148,88.735352 142.389648,89.074707 145.728516,89.693848 L 145.728516,58.061035 C 145.728516,55.126465 143.349609,52.747070 140.414063,52.747070 L 130.451172,52.747070 C 127.517578,52.747070 125.138672,55.126465 125.138672,58.061035 L 125.138672,89.693848 C 128.477539,89.074707 131.915039,88.735352 135.433594,88.735352 Z"/>
                  </Canvas>

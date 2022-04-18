@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using BabySmash.Properties;
 
@@ -11,7 +12,7 @@ namespace BabySmash
     /// Interaction logic for CoolLetter.xaml
     /// </summary>
     [Serializable]
-    public partial class CoolLetter
+    public partial class CoolLetter : UserControl
     {
         public CoolLetter()
         {

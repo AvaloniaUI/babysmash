@@ -12,7 +12,7 @@
 		<Canvas x:Name="Letter" >
 			<Path x:Name="letterPath" StrokeThickness="10" Stroke="#ff000000"  >
 				<Path.Fill>
-					<RadialGradientBrush MappingMode="Absolute" GradientOrigin="123,198" Center="123,198" RadiusX="102" RadiusY="102">
+					<RadialGradientBrush GradientOrigin="123,198" Center="123,198" Radius="102">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-16,305" />
 						</RadialGradientBrush.Transform>

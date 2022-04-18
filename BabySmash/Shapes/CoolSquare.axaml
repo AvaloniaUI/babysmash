@@ -6,30 +6,13 @@
 	mc:Ignorable="d"
 	x:Class="BabySmash.CoolSquare"
 	x:Name="UserControl"
-	d:DesignWidth="6.667" d:DesignHeight="10">
-    <UserControl.Resources>
-        <Storyboard x:Key="Eyes">
-            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Eyes" Storyboard.TargetProperty="(UIElement.Opacity)" RepeatBehavior="Forever">
-                <SplineDoubleKeyFrame KeyTime="00:00:02.1000000" Value="1"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:02.1000000" Value="0"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:02.300000" Value="0"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:02.300000" Value="1"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:7.300000" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-    </UserControl.Resources>
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource Eyes}"/>
-        </EventTrigger>
-    </UserControl.Triggers>
-
+	d:DesignWidth="6.667" d:DesignHeight="10"> 
 
     <Grid x:Name="LayoutRoot">
         <Canvas x:Name="Square">
             <Rectangle  x:Name="Body" StrokeThickness="10" Stroke="#ff000000" Width="207" Height="207">
                 <Rectangle.Fill>
-                    <RadialGradientBrush MappingMode="Absolute" GradientOrigin="110.185547,455" Center="110.185547,455" RadiusX="98.5" RadiusY="98.5">
+                    <RadialGradientBrush GradientOrigin="110.185547,455" Center="110.185547,455" Radius="98.5">
                         <RadialGradientBrush.Transform>
                             <MatrixTransform Matrix="1,0,-0,-1,-6.685547,558.5" />
                         </RadialGradientBrush.Transform>
@@ -40,7 +23,7 @@
             </Rectangle>
 
             <Canvas x:Name="Face">
-                <Canvas x:Name="Eyes">
+                <Canvas x:Name="Eyes" Classes="BlinkingEye">
                     <Path Fill="#ff000000" Data="F1 M 93.295410,58.927246 C 93.295410,55.992676 90.916504,53.613281 87.981445,53.613281 L 78.018066,53.613281 C 75.083496,53.613281 72.704590,55.992676 72.704590,58.927246 L 72.704590,91 L 93.295410,91 L 93.295410,58.927246 Z"/>
                     <Path Fill="#ff000000" Data="F1 M 134.295410,58.927246 C 134.295410,55.992676 131.916504,53.613281 128.981445,53.613281 L 119.018066,53.613281 C 116.083496,53.613281 113.704590,55.992676 113.704590,58.927246 L 113.704590,91 L 134.295410,91 L 134.295410,58.927246 Z"/>
                 </Canvas>
