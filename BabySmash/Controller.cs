@@ -12,30 +12,24 @@ namespace BabySmash
 {
     using System.Globalization;
     using System.IO;
-    using System.Speech.Synthesis;
-    using System.Text;
     using Newtonsoft.Json;
 
     public class Controller
     {
-        [DllImport("user32.dll")]
-        private static extern IntPtr SetFocus(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
         private static Controller instance = new Controller();
 
         public bool isOptionsDialogShown { get; set; }
         private bool isDrawing = false;
-        private readonly SpeechSynthesizer objSpeech = new SpeechSynthesizer();
+        
+        // TODO: Disabled Speech features since it's not cross platform compatible as well.
+        // private readonly SpeechSynthesizer objSpeech = new SpeechSynthesizer();
         private readonly List<MainWindow> windows = new List<MainWindow>();
 
         private DispatcherTimer timer = new DispatcherTimer();
         private Queue<Shape> ellipsesQueue = new Queue<Shape>();
 
-        private Dictionary<string, List<UserControl>> figuresUserControlQueue =
-            new Dictionary<string, List<UserControl>>();
+        // private Dictionary<string, List<UserControl>> figuresUserControlQueue =
+        //     new Dictionary<string, List<UserControl>>();
 
         // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
         // private ApplicationDeployment deployment = null;
@@ -93,8 +87,8 @@ namespace BabySmash
 
         public void Launch(IClassicDesktopStyleApplicationLifetime desktop)
         {
-            timer.Tick += new EventHandler(timer_Tick);
-            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Tick += timer_Tick;
+            timer.Interval = TimeSpan.FromSeconds(1);
             int Number = 0;
 
             // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
@@ -114,29 +108,12 @@ namespace BabySmash
                     Debug.WriteLine(e.ToString());
                 }
             }*/
+ 
+            var dummyWindow = new Window();
 
-
-            var defaultWindow = new MainWindow(this)
+            foreach (var s in dummyWindow.Screens.All)
             {
-                WindowStartupLocation = WindowStartupLocation.Manual,
-                WindowState = WindowState.FullScreen,
-                SystemDecorations = SystemDecorations.None,
-                Topmost = true,
-                Background = (Settings.Default.TransparentBackground
-                    ? Brushes.Transparent
-                    : Brushes.WhiteSmoke),
-                Name = "Window" + Number++
-            };
-
-            desktop.MainWindow = desktop;
-            windows.Add(defaultWindow);
-
-            defaultWindow.PointerPressed += HandleMouseLeftButtonDown;
-            defaultWindow.PointerWheelChanged += HandleMouseWheel;
-
-            foreach (var s in defaultWindow.Screens.All)
-            {
-                var m = new MainWindow(this)
+                var m = new MainWindow
                 {
                     WindowStartupLocation = WindowStartupLocation.Manual,
                     Position = s.WorkingArea.Position,
@@ -148,14 +125,23 @@ namespace BabySmash
                     Background = (Settings.Default.TransparentBackground
                         ? Brushes.Transparent
                         : Brushes.WhiteSmoke),
-                    Name = "Window" + Number++
+                    // Name = "Window" + Number++,
+                    Controller = this,
+                    DataContext = this
                 };
 
-                figuresUserControlQueue[m.Name] = new List<UserControl>();
+                // figuresUserControlQueue[m.Name] = new List<UserControl>();
+
+                if (windows.Count == 0)
+                {
+                    desktop.MainWindow = m;
+                }
 
                 m.Show();
-                m.MouseLeftButtonDown += HandleMouseLeftButtonDown;
-                m.MouseWheel += HandleMouseWheel;
+                
+                m.PointerPressed += HandleMouseLeftButtonDown;
+                m.PointerWheelChanged += HandleMouseWheel;
+
                 windows.Add(m);
             }
 
@@ -188,25 +174,11 @@ namespace BabySmash
                 return;
             }
 
-            try
-            {
-                IntPtr windowHandle = new WindowInteropHelper(Application.Current.MainWindow).Handle;
-                SetForegroundWindow(windowHandle);
-                SetFocus(windowHandle);
-            }
-            catch (Exception)
-            {
-                //Wish me luck!
-            }
+            windows[0].Focus();
         }
 
         public void ProcessKey(Control uie, KeyEventArgs e)
         {
-            if (uie.IsMouseCaptured)
-            {
-                uie.ReleaseMouseCapture();
-            }
-
             char displayChar = GetDisplayChar(e.Key);
             AddFigure(uie, displayChar);
         }
@@ -225,129 +197,74 @@ namespace BabySmash
                 return (char) ('0' + key - Key.NumPad0);
             }
 
-            try
-            {
-                return char.ToUpperInvariant(TryGetLetter(key));
-            }
-            catch (Exception ex)
-            {
-                Debug.Assert(false, ex.ToString());
-                return '*';
-            }
+            return char.MinValue;
+
+            // try
+            // {
+            //     return char.ToUpperInvariant(TryGetLetter(key));
+            // }
+            // catch (Exception ex)
+            // {
+            //     Debug.Assert(false, ex.ToString());
+            //     return '*';
+            // }
         }
-
-        public enum MapType : uint
-        {
-            MAPVK_VK_TO_VSC = 0x0,
-            MAPVK_VSC_TO_VK = 0x1,
-            MAPVK_VK_TO_CHAR = 0x2,
-            MAPVK_VSC_TO_VK_EX = 0x3,
-        }
-
-        [DllImport("user32.dll")]
-        public static extern int ToUnicode(
-            uint wVirtKey,
-            uint wScanCode,
-            byte[] lpKeyState,
-            [Out, MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 4)]
-            StringBuilder pwszBuff,
-            int cchBuff,
-            uint wFlags);
-
-        [DllImport("user32.dll")]
-        public static extern bool GetKeyboardState(byte[] lpKeyState);
-
-        [DllImport("user32.dll")]
-        public static extern uint MapVirtualKey(uint uCode, MapType uMapType);
-
-        private static char TryGetLetter(Key key)
-        {
-            char ch = ' ';
-
-            int virtualKey = KeyInterop.VirtualKeyFromKey(key);
-            byte[] keyboardState = new byte[256];
-            GetKeyboardState(keyboardState);
-
-            uint scanCode = MapVirtualKey((uint) virtualKey, MapType.MAPVK_VK_TO_VSC);
-            StringBuilder stringBuilder = new StringBuilder(2);
-
-            int result = ToUnicode((uint) virtualKey, scanCode, keyboardState, stringBuilder, stringBuilder.Capacity,
-                0);
-            switch (result)
-            {
-                case -1:
-                    break;
-                case 0:
-                    break;
-                case 1:
-                {
-                    ch = stringBuilder[0];
-                    break;
-                }
-                default:
-                {
-                    ch = stringBuilder[0];
-                    break;
-                }
-            }
-
-            return ch;
-        }
-
+ 
         private void AddFigure(Control uie, char c)
         {
-            FigureTemplate template = FigureGenerator.GenerateFigureTemplate(c);
-            foreach (MainWindow window in this.windows)
-            {
-                UserControl f = FigureGenerator.NewUserControlFrom(template);
-                window.AddFigure(f);
-
-                var queue = figuresUserControlQueue[window.Name];
-                queue.Add(f);
-
-                // Letters should already have accurate width and height, but others may them assigned.
-                if (double.IsNaN(f.Width) || double.IsNaN(f.Height))
-                {
-                    f.Width = 300;
-                    f.Height = 300;
-                }
-
-                Canvas.SetLeft(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Width - f.Width)));
-                Canvas.SetTop(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Height - f.Height)));
-
-                Storyboard storyboard = Animation.CreateDPAnimation(uie, f,
-                    UIElement.OpacityProperty,
-                    new Duration(TimeSpan.FromSeconds(Settings.Default.FadeAfter)), 1, 0);
-                if (Settings.Default.FadeAway) storyboard.Begin(uie);
-
-                IHasFace face = f as IHasFace;
-                if (face != null)
-                {
-                    face.FaceVisible = Settings.Default.FacesOnShapes ? Visibility.Visible : Visibility.Hidden;
-                }
-
-                if (queue.Count > Settings.Default.ClearAfter)
-                {
-                    window.RemoveFigure(queue[0]);
-                    queue.RemoveAt(0);
-                }
-            }
-
-            // Find the last word typed, if applicable.
-            string lastWord = this.wordFinder.LastWord(figuresUserControlQueue.Values.First());
-            if (lastWord != null)
-            {
-                foreach (MainWindow window in this.windows)
-                {
-                    this.wordFinder.AnimateLettersIntoWord(figuresUserControlQueue[window.Name], lastWord);
-                }
-
-                SpeakString(lastWord);
-            }
-            else
-            {
-                PlaySound(template);
-            }
+            //  
+            // FigureTemplate template = FigureGenerator.GenerateFigureTemplate(c);
+            // foreach (MainWindow window in this.windows)
+            // {
+            //     UserControl f = FigureGenerator.NewUserControlFrom(template);
+            //     window.AddFigure(f);
+            //
+            //     var queue = figuresUserControlQueue[window.Name];
+            //     queue.Add(f);
+            //
+            //     // Letters should already have accurate width and height, but others may them assigned.
+            //     if (double.IsNaN(f.Width) || double.IsNaN(f.Height))
+            //     {
+            //         f.Width = 300;
+            //         f.Height = 300;
+            //     }
+            //
+            //     Canvas.SetLeft(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Width - f.Width)));
+            //     Canvas.SetTop(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Height - f.Height)));
+            //
+            //     Storyboard storyboard = Animation.CreateDPAnimation(uie, f,
+            //         UIElement.OpacityProperty,
+            //         new Duration(TimeSpan.FromSeconds(Settings.Default.FadeAfter)), 1, 0);
+            //     if (Settings.Default.FadeAway) storyboard.Begin(uie);
+            //
+            //     IHasFace face = f as IHasFace;
+            //     if (face != null)
+            //     {
+            //         face.IsFaceVisible = Settings.Default.FacesOnShapes;
+            //     }
+            //
+            //     if (queue.Count > Settings.Default.ClearAfter)
+            //     {
+            //         window.RemoveFigure(queue[0]);
+            //         queue.RemoveAt(0);
+            //     }
+            // }
+            //
+            // // Find the last word typed, if applicable.
+            // string lastWord = this.wordFinder.LastWord(figuresUserControlQueue.Values.First());
+            // if (lastWord != null)
+            // {
+            //     foreach (MainWindow window in this.windows)
+            //     {
+            //         this.wordFinder.AnimateLettersIntoWord(figuresUserControlQueue[window.Name], lastWord);
+            //     }
+            //
+            //     SpeakString(lastWord);
+            // }
+            // else
+            // {
+            //     PlaySound(template);
+            // }
         }
 
         //private static DoubleAnimationUsingKeyFrames ApplyZoomOut(UserControl u)
@@ -376,18 +293,18 @@ namespace BabySmash
         //   container.Children.Remove(toBeRemoved);
         //}
 
-        void HandleMouseWheel(object sender, PointerWheelEventArgs pointerWheelEventArgs)
+        void HandleMouseWheel(object sender, PointerWheelEventArgs e)
         {
             UserControl foo = sender as UserControl; //expected this on Sender!
             if (foo != null)
             {
-                if (e.Delta < 0)
+                if (e.Delta.Y < 0)
                 {
-                    Animation.ApplyZoom(foo, new Duration(TimeSpan.FromSeconds(0.5)), 2.5);
+                    // Animation.ApplyZoom(foo, new Duration(TimeSpan.FromSeconds(0.5)), 2.5);
                 }
                 else
                 {
-                    Animation.ApplyZoom(foo, new Duration(TimeSpan.FromSeconds(0.5)), 0.5);
+                    // Animation.ApplyZoom(foo, new Duration(TimeSpan.FromSeconds(0.5)), 0.5);
                 }
             }
         }
@@ -398,7 +315,7 @@ namespace BabySmash
             if (f != null && f.Opacity > 0.1) //can it be seen? 
             {
                 isDrawing = true; //HACK: This is a cheat to stop the mouse draw action.
-                Animation.ApplyRandomAnimationEffect(f, Duration.Automatic);
+                // Animation.ApplyRandomAnimationEffect(f, Duration.Automatic);
                 PlayLaughter(); //Might be better to re-speak the name, color, etc.
             }
         }
@@ -409,7 +326,9 @@ namespace BabySmash
             {
                 PlayLaughter();
             }
-
+            
+            // TODO: Disabled Speech features since it's not cross platform compatible as well.
+            /*
             if (objSpeech != null && Settings.Default.Sounds == "Speech")
             {
                 if (template.Letter != null && template.Letter.Length == 1 && Char.IsLetterOrDigit(template.Letter[0]))
@@ -420,7 +339,7 @@ namespace BabySmash
                 {
                     SpeakString(GetLocalizedString(Utils.ColorToString(template.Color)) + " " + template.Name);
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -428,7 +347,8 @@ namespace BabySmash
         /// </summary>
         public static string GetLocalizedString(string key)
         {
-            CultureInfo keyboardLanguage = Avalonia.Forms.InputLanguage.CurrentInputLanguage.Culture;
+            var keyboardLanguage = CultureInfo.CurrentCulture;
+            
             string culture = keyboardLanguage.Name;
             string path = $@"Resources\Strings\{culture}.json";
             string path2 = @"Resources\Strings\en-EN.json";
@@ -466,10 +386,15 @@ namespace BabySmash
 
         private void SpeakString(string s)
         {
+            // TODO: Disabled Speech features since it's not cross platform compatible as well.
+            /*
             ThreadedSpeak ts = new ThreadedSpeak(s);
             ts.Speak();
+            */
         }
 
+        // TODO: Disabled Speech features since it's not cross platform compatible as well.
+        /*
         private class ThreadedSpeak
         {
             private string Word = null;
@@ -524,134 +449,134 @@ namespace BabySmash
                     System.Diagnostics.Trace.WriteLine(e.ToString());
                 }
             }
-        }
+        }*/
 
-        public void ShowOptionsDialog()
-        {
-            bool foo = Settings.Default.TransparentBackground;
-            isOptionsDialogShown = true;
-            var o = new Options();
-            Mouse.Capture(null);
-            foreach (MainWindow m in this.windows)
-            {
-                m.Topmost = false;
-            }
-
-            o.Topmost = true;
-            o.Focus();
-            o.ShowDialog();
-            Debug.Write("test");
-            foreach (MainWindow m in this.windows)
-            {
-                m.Topmost = true;
-                //m.ResetCanvas();
-            }
-
-            isOptionsDialogShown = false;
-
-            if (foo != Settings.Default.TransparentBackground)
-            {
-                MessageBoxResult result = MessageBox.Show(
-                    "You've changed the Window Transparency Option. We'll need to restart BabySmash! for you to see the change. Pressing YES will restart BabySmash!. Is that OK?",
-                    "Need to Restart", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    Application.Current.Shutdown();
-                    Avalonia.Forms.Application.Restart();
-                }
-            }
-        }
-
-        public void MouseDown(MainWindow main, MouseButtonEventArgs e)
-        {
-            if (isDrawing || Settings.Default.MouseDraw) return;
-
-            // Create a new Ellipse object and add it to canvas.
-            Point ptCenter = e.GetPosition(main.mouseCursorCanvas);
-            MouseDraw(main, ptCenter);
-            isDrawing = true;
-            main.CaptureMouse();
-
-            Win32Audio.PlayWavResource("smallbumblebee.wav");
-        }
-
-        public void MouseWheel(MainWindow main, MouseWheelEventArgs e)
-        {
-            if (e.Delta > 0)
-            {
-                Win32Audio.PlayWavResourceYield("rising.wav");
-            }
-            else
-            {
-                Win32Audio.PlayWavResourceYield("falling.wav");
-            }
-        }
-
-        public void MouseUp(MainWindow main, MouseButtonEventArgs e)
-        {
-            isDrawing = false;
-            if (Settings.Default.MouseDraw) return;
-            main.ReleaseMouseCapture();
-        }
-
-        public void MouseMove(MainWindow main, MouseEventArgs e)
-        {
-            if (isOptionsDialogShown)
-            {
-                main.ReleaseMouseCapture();
-                return;
-            }
-
-            if (Settings.Default.MouseDraw && main.IsMouseCaptured == false)
-                main.CaptureMouse();
-
-            if (isDrawing || Settings.Default.MouseDraw)
-            {
-                MouseDraw(main, e.GetPosition(main));
-            }
-
-            // Cheesy, but hotkeys are ignored when the mouse is captured.
-            // However, if we don't capture and release, the shapes will draw forever.
-            if (Settings.Default.MouseDraw && main.IsMouseCaptured)
-                main.ReleaseMouseCapture();
-        }
-
-        private void MouseDraw(MainWindow main, Point p)
-        {
-            //randomize at some point?
-            Shape shape = new Ellipse
-            {
-                Stroke = SystemColors.WindowTextBrush,
-                StrokeThickness = 0,
-                Fill = Utils.GetGradientBrush(Utils.GetRandomColor()),
-                Width = 50,
-                Height = 50
-            };
-
-            ellipsesQueue.Enqueue(shape);
-            main.mouseDragCanvas.Children.Add(shape);
-            Canvas.SetLeft(shape, p.X - 25);
-            Canvas.SetTop(shape, p.Y - 25);
-
-            if (Settings.Default.MouseDraw)
-                Win32Audio.PlayWavResourceYield("smallbumblebee.wav");
-
-            if (ellipsesQueue.Count > 30) //this is arbitrary
-            {
-                Shape shapeToRemove = ellipsesQueue.Dequeue();
-                main.mouseDragCanvas.Children.Remove(shapeToRemove);
-            }
-        }
-
-        //private static void ResetCanvas(MainWindow main)
-        //{
-        //   main.ResetCanvas();
-        //}
-
-        public void LostMouseCapture(MainWindow main, MouseEventArgs e)
-        {
-            if (Settings.Default.MouseDraw) return;
-            if (isDrawing) isDrawing = false;
-        }
+        // public void ShowOptionsDialog()
+        // {
+        //     bool foo = Settings.Default.TransparentBackground;
+        //     isOptionsDialogShown = true;
+        //     var o = new Options();
+        //     Mouse.Capture(null);
+        //     foreach (MainWindow m in this.windows)
+        //     {
+        //         m.Topmost = false;
+        //     }
+        //
+        //     o.Topmost = true;
+        //     o.Focus();
+        //     o.ShowDialog();
+        //     Debug.Write("test");
+        //     foreach (MainWindow m in this.windows)
+        //     {
+        //         m.Topmost = true;
+        //         //m.ResetCanvas();
+        //     }
+        //
+        //     isOptionsDialogShown = false;
+        //
+        //     if (foo != Settings.Default.TransparentBackground)
+        //     {
+        //         MessageBoxResult result = MessageBox.Show(
+        //             "You've changed the Window Transparency Option. We'll need to restart BabySmash! for you to see the change. Pressing YES will restart BabySmash!. Is that OK?",
+        //             "Need to Restart", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        //         if (result == MessageBoxResult.Yes)
+        //         {
+        //             Application.Current.Shutdown();
+        //             Avalonia.Forms.Application.Restart();
+        //         }
+        //     }
+        // }
+        //
+        // public void MouseDown(MainWindow main, MouseButtonEventArgs e)
+        // {
+        //     if (isDrawing || Settings.Default.MouseDraw) return;
+        //
+        //     // Create a new Ellipse object and add it to canvas.
+        //     Point ptCenter = e.GetPosition(main.mouseCursorCanvas);
+        //     MouseDraw(main, ptCenter);
+        //     isDrawing = true;
+        //     main.CaptureMouse();
+        //
+        //     Win32Audio.PlayWavResource("smallbumblebee.wav");
+        // }
+        //
+        // public void MouseWheel(MainWindow main, MouseWheelEventArgs e)
+        // {
+        //     if (e.Delta > 0)
+        //     {
+        //         Win32Audio.PlayWavResourceYield("rising.wav");
+        //     }
+        //     else
+        //     {
+        //         Win32Audio.PlayWavResourceYield("falling.wav");
+        //     }
+        // }
+        //
+        // public void MouseUp(MainWindow main, MouseButtonEventArgs e)
+        // {
+        //     isDrawing = false;
+        //     if (Settings.Default.MouseDraw) return;
+        //     main.ReleaseMouseCapture();
+        // }
+        //
+        // public void MouseMove(MainWindow main, MouseEventArgs e)
+        // {
+        //     if (isOptionsDialogShown)
+        //     {
+        //         main.ReleaseMouseCapture();
+        //         return;
+        //     }
+        //
+        //     if (Settings.Default.MouseDraw && main.IsMouseCaptured == false)
+        //         main.CaptureMouse();
+        //
+        //     if (isDrawing || Settings.Default.MouseDraw)
+        //     {
+        //         MouseDraw(main, e.GetPosition(main));
+        //     }
+        //
+        //     // Cheesy, but hotkeys are ignored when the mouse is captured.
+        //     // However, if we don't capture and release, the shapes will draw forever.
+        //     if (Settings.Default.MouseDraw && main.IsMouseCaptured)
+        //         main.ReleaseMouseCapture();
+        // }
+        //
+        // private void MouseDraw(MainWindow main, Point p)
+        // {
+        //     //randomize at some point?
+        //     Shape shape = new Ellipse
+        //     {
+        //         Stroke = Theme,
+        //         StrokeThickness = 0,
+        //         Fill = Utils.GetGradientBrush(Utils.GetRandomColor()),
+        //         Width = 50,
+        //         Height = 50
+        //     };
+        //
+        //     ellipsesQueue.Enqueue(shape);
+        //     main.mouseDragCanvas.Children.Add(shape);
+        //     Canvas.SetLeft(shape, p.X - 25);
+        //     Canvas.SetTop(shape, p.Y - 25);
+        //
+        //     if (Settings.Default.MouseDraw)
+        //         Win32Audio.PlayWavResourceYield("smallbumblebee.wav");
+        //
+        //     if (ellipsesQueue.Count > 30) //this is arbitrary
+        //     {
+        //         Shape shapeToRemove = ellipsesQueue.Dequeue();
+        //         main.mouseDragCanvas.Children.Remove(shapeToRemove);
+        //     }
+        // }
+        //
+        // //private static void ResetCanvas(MainWindow main)
+        // //{
+        // //   main.ResetCanvas();
+        // //}
+        //
+        // public void LostMouseCapture(MainWindow main, MouseEventArgs e)
+        // {
+        //     if (Settings.Default.MouseDraw) return;
+        //     if (isDrawing) isDrawing = false;
+        // }
     }
 }

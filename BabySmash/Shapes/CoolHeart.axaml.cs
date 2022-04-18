@@ -8,7 +8,7 @@ namespace BabySmash
     /// Interaction logic for CoolHeart.xaml
     /// </summary>
     [Serializable]
-    public partial class CoolHeart : IHasFace
+    public partial class CoolHeart : UserControl, IHasFace
     {
         public CoolHeart(Brush x) : this()
         {

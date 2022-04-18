@@ -8,7 +8,7 @@ namespace BabySmash
     /// Interaction logic for CoolHexagon.xaml
     /// </summary>
     [Serializable]
-    public partial class CoolHexagon : IHasFace
+    public partial class CoolHexagon : UserControl, IHasFace
     {
         public CoolHexagon(Brush x) : this()
         {

@@ -14,7 +14,7 @@ namespace BabySmash
         public Brush Fill { get; set; }
         public Color Color { get; set; }
         public BrushControlFunc GeneratorFunc { get; set; }
-        public Effect Effect { get; set; }
+        // public Effect Effect { get; set; }
         public string Name { get; set; }
         public string Letter { get; set; }
     }
@@ -40,30 +40,30 @@ namespace BabySmash
 
             if (template.Letter.Length == 1 && Char.IsLetterOrDigit(template.Letter[0]))
             {
-                retVal = new CoolLetter(template.Fill.Clone(), template.Letter[0]);
+                retVal = new CoolLetter(template.Fill, template.Letter[0]);
             }
             else
             {
-                retVal = template.GeneratorFunc(template.Fill.Clone());
+                retVal = template.GeneratorFunc(template.Fill);
             }
 
-            var randomTransition1 = (Tweener.TransitionType)Utils.RandomBetweenTwoNumbers(1, (int)Tweener.TransitionType.EaseOutInBounce);
-            var ani1 = Tweener.Tween.CreateAnimation(randomTransition1, 0, 1, new TimeSpan(0, 0, 0, 1), 30);
-            var randomTransition2 = (Tweener.TransitionType)Utils.RandomBetweenTwoNumbers(1, (int)Tweener.TransitionType.EaseOutInBounce);
-            var ani2 = Tweener.Tween.CreateAnimation(randomTransition2, 360, 0, new TimeSpan(0, 0, 0, 1), 30);
-            retVal.RenderTransformOrigin = new Point(0.5, 0.5);
-            var group = new TransformGroup();
-            group.Children.Add(new ScaleTransform());
-            group.Children.Add(new RotateTransform());
-            retVal.RenderTransform = group;
-            group.Children[0].BeginAnimation(ScaleTransform.ScaleXProperty, ani1);
-            group.Children[0].BeginAnimation(ScaleTransform.ScaleYProperty, ani1);
-            group.Children[1].BeginAnimation(RotateTransform.AngleProperty, ani2);
-
-            if (Settings.Default.BitmapEffects)
-            {
-                retVal.Effect = template.Effect.Clone();
-            }
+            // var randomTransition1 = (Tweener.TransitionType)Utils.RandomBetweenTwoNumbers(1, (int)Tweener.TransitionType.EaseOutInBounce);
+            // // var ani1 = Tweener.Tween.CreateAnimation(randomTransition1, 0, 1, new TimeSpan(0, 0, 0, 1), 30);
+            // var randomTransition2 = (Tweener.TransitionType)Utils.RandomBetweenTwoNumbers(1, (int)Tweener.TransitionType.EaseOutInBounce);
+            // var ani2 = Tweener.Tween.CreateAnimation(randomTransition2, 360, 0, new TimeSpan(0, 0, 0, 1), 30);
+            // retVal.RenderTransformOrigin = new Point(0.5, 0.5);
+            // var group = new TransformGroup();
+            // group.Children.Add(new ScaleTransform());
+            // group.Children.Add(new RotateTransform());
+            // retVal.RenderTransform = group;
+            // group.Children[0].BeginAnimation(ScaleTransform.ScaleXProperty, ani1);
+            // group.Children[0].BeginAnimation(ScaleTransform.ScaleYProperty, ani1);
+            // group.Children[1].BeginAnimation(RotateTransform.AngleProperty, ani2);
+            //
+            // if (Settings.Default.BitmapEffects)
+            // {
+            //     retVal.Effect = template.Effect.Clone();
+            // }
 
             return retVal;
         }
@@ -94,7 +94,7 @@ namespace BabySmash
                 GeneratorFunc = nameFunc.Value,
                 Fill = Utils.GetGradientBrush(c),
                 Letter = displayChar.ToString(),
-                Effect = Animation.GetRandomBitmapEffect()
+                // Effect = Animation.GetRandomBitmapEffect()
             };
         }
     }

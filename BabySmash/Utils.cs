@@ -53,7 +53,7 @@ namespace BabySmash
         public static Brush GetGradientBrush(Color color)
         {
             RadialGradientBrush myBrush = new RadialGradientBrush();
-            myBrush.GradientOrigin = new Point(0.75, 0.25);
+            myBrush.GradientOrigin = new RelativePoint(0.75, 0.25, RelativeUnit.Relative);
             myBrush.GradientStops.Add(new GradientStop(color.LightenOrDarken(50), 0.0));
             myBrush.GradientStops.Add(new GradientStop(color, 0.5));
             myBrush.GradientStops.Add(new GradientStop(color.LightenOrDarken(-50), 1.0));
@@ -62,12 +62,11 @@ namespace BabySmash
 
         public static Color LightenOrDarken(this Color src, sbyte degree)
         {
-            Color ret = new Color();
-            ret.A = src.A;
-            ret.R = (byte)Math.Max(Math.Min(src.R + degree, 255), 0);
-            ret.G = (byte)Math.Max(Math.Min(src.G + degree, 255), 0);
-            ret.B = (byte)Math.Max(Math.Min(src.B + degree, 255), 0);
-            return ret;
+            var a = src.A;
+            var r = (byte) Math.Max(Math.Min(src.R + degree, 255), 0);
+            var g = (byte) Math.Max(Math.Min(src.G + degree, 255), 0);
+            var b = (byte) Math.Max(Math.Min(src.B + degree, 255), 0);
+            return new Color(a, r, g, b);
         }
 
 

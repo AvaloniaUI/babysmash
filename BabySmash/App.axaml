@@ -2,9 +2,9 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
-       <StyleInclude Source="Styles/GlobalStyles.axaml"/>
     </Application.Resources>
     <Application.Styles>
+        <StyleInclude Source="avares://BabySmash/Styles/GlobalStyles.axaml"/>
         <FluentTheme Mode="Light" />
     </Application.Styles>
 </Application>

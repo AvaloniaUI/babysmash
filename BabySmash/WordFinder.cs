@@ -106,7 +106,7 @@ namespace BabySmash
         public void AnimateLettersIntoWord(List<UserControl> figuresQueue, string lastWord)
         {
             // Prepare to animate the letters into their respective positions, on each screen.
-            Duration duration = new Duration(TimeSpan.FromMilliseconds(1200));
+            TimeSpan duration = TimeSpan.FromMilliseconds(1200);
             int totalLetters = lastWord.Length;
 
             Point wordCenter = this.FindWordCenter(figuresQueue, totalLetters);
@@ -134,12 +134,12 @@ namespace BabySmash
 
                 // Start translating from wherever we were already translated to (or 0 if not yet
                 // translated) and going to the new position for this letter based for the word.
-                var wordTranslationX = wordLeftEdge - Canvas.GetLeft(currentFigure);
-                var wordTranslationY = wordCenter.Y - Canvas.GetTop(currentFigure);
-                var animationX = new DoubleAnimation(transform.X, wordTranslationX + wordOffsetX, duration);
-                var animationY = new DoubleAnimation(transform.Y, wordTranslationY, duration);
-                transform.BeginAnimation(TranslateTransform.XProperty, animationX);
-                transform.BeginAnimation(TranslateTransform.YProperty, animationY);
+                // var wordTranslationX = wordLeftEdge - Canvas.GetLeft(currentFigure);
+                // var wordTranslationY = wordCenter.Y - Canvas.GetTop(currentFigure);
+                // var animationX = new DoubleAnimation(transform.X, wordTranslationX + wordOffsetX, duration);
+                // var animationY = new DoubleAnimation(transform.Y, wordTranslationY, duration);
+                // transform.BeginAnimation(TranslateTransform.XProperty, animationX);
+                // transform.BeginAnimation(TranslateTransform.YProperty, animationY);
             }
         }
 
