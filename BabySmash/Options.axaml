@@ -22,35 +22,35 @@
         <CollectionViewSource Source="{Binding Source={x:Static Fonts.SystemFontFamilies}}" x:Key="myFonts"/>
 
         <!-- Brushes -->
-        <RadialGradientBrush x:Key="blueBrush" MappingMode="Absolute" GradientOrigin="410.416016,182.5" Center="410.416016,182.5" RadiusX="118.077667" RadiusY="118.077667">
+        <RadialGradientBrush x:Key="blueBrush" GradientOrigin="410.416016,182.5" Center="410.416016,182.5" Radius="118.077667">
             <RadialGradientBrush.Transform>
                 <MatrixTransform Matrix="1,0,-0,-1,-255.808105,264.916992" />
             </RadialGradientBrush.Transform>
             <GradientStop Offset="0" Color="#ff00ffff"/>
             <GradientStop Offset="1" Color="#ff0000ff"/>
         </RadialGradientBrush>
-        <RadialGradientBrush x:Key="orangeBrush" MappingMode="Absolute" GradientOrigin="664.333008,431.5" Center="664.333008,431.5" RadiusX="104.916328" RadiusY="104.916328">
+        <RadialGradientBrush x:Key="orangeBrush" GradientOrigin="664.333008,431.5" Center="664.333008,431.5" Radius="104.916328">
             <RadialGradientBrush.Transform>
                 <MatrixTransform Matrix="1,0,-0,-1,-546.399414,533.633789" />
             </RadialGradientBrush.Transform>
             <GradientStop Offset="0" Color="#ffffff00"/>
             <GradientStop Offset="1" Color="#fff05923"/>
         </RadialGradientBrush>
-        <RadialGradientBrush x:Key="purpleBrush" MappingMode="Absolute" GradientOrigin="110.185547,455" Center="110.185547,455" RadiusX="98.5" RadiusY="98.5">
+        <RadialGradientBrush x:Key="purpleBrush" GradientOrigin="110.185547,455" Center="110.185547,455" Radius="98.5">
             <RadialGradientBrush.Transform>
                 <MatrixTransform Matrix="1,0,-0,-1,-6.685547,558.5" />
             </RadialGradientBrush.Transform>
             <GradientStop Offset="0" Color="#ffff00ff"/>
             <GradientStop Offset="1" Color="#ff9d005c"/>
         </RadialGradientBrush>
-        <RadialGradientBrush x:Key="greenBrush" MappingMode="Absolute" GradientOrigin="390.395508,448.130371" Center="390.395508,448.130371" RadiusX="113.034821" RadiusY="113.034821">
+        <RadialGradientBrush x:Key="greenBrush" GradientOrigin="390.395508,448.130371" Center="390.395508,448.130371" Radius="113.034821">
             <RadialGradientBrush.Transform>
                 <MatrixTransform Matrix="1,0,-0,-1,-263.816895,569.592773" />
             </RadialGradientBrush.Transform>
             <GradientStop Offset="0" Color="#ff00ff00"/>
             <GradientStop Offset="1" Color="#ff006736"/>
         </RadialGradientBrush>
-        <RadialGradientBrush x:Key="redBrush" MappingMode="Absolute" GradientOrigin="123,198" Center="123,198" RadiusX="102" RadiusY="102">
+        <RadialGradientBrush x:Key="redBrush" GradientOrigin="123,198" Center="123,198" Radius="102">
             <RadialGradientBrush.Transform>
                 <MatrixTransform Matrix="1,0,-0,-1,-16,305" />
             </RadialGradientBrush.Transform>
@@ -167,7 +167,7 @@
 
                             <!-- The Popup shows the list of items in the ComboBox. IsOpen is databound to IsDropDownOpen which is toggled via the ComboBoxToggleButton -->
                             <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide">
-                                <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True">
+                                <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding Bounds.Width}" x:Name="DropDown" SnapsToDevicePixels="True">
                                     <Border x:Name="DropDownBorder" BorderThickness="1" Background="#FFA7A7A7"/>
                                     <ScrollViewer Margin="4,6,4,6"  SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
 
@@ -212,7 +212,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="20"/>
                 </Grid.ColumnDefinitions>
-                <Rectangle Grid.ColumnSpan="2" HorizontalAlignment="Stretch" x:Name="Rectangle" VerticalAlignment="Stretch" Width="Auto" Height="Auto" RadiusX="1" RadiusY="1">
+                <Rectangle Grid.ColumnSpan="2" HorizontalAlignment="Stretch" x:Name="Rectangle" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Radius="1">
                     <Rectangle.Fill>
                         <LinearGradientBrush EndPoint="0.5,-2.453" StartPoint="0.5,2.847">
                             <GradientStop Color="#FF000000" Offset="0"/>
@@ -220,7 +220,7 @@
                         </LinearGradientBrush>
                     </Rectangle.Fill>
                 </Rectangle>
-                <Rectangle Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" RadiusX="1" RadiusY="1"/>
+                <Rectangle Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Radius="1"/>
                 <Path Grid.Column="1" HorizontalAlignment="Center" x:Name="Arrow" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFF7F7F7"/>
             </Grid>
             <ControlTemplate.Triggers>
@@ -263,7 +263,7 @@
 
                             <!-- The Popup shows the list of items in the ComboBox. IsOpen is databound to IsDropDownOpen which is toggled via the ComboBoxToggleButton -->
                             <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide">
-                                <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True">
+                                <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding Bounds.Width}" x:Name="DropDown" SnapsToDevicePixels="True">
                                     <Border x:Name="DropDownBorder" BorderThickness="1" Background="#FFA7A7A7"/>
                                     <ScrollViewer Margin="4,6,4,6" Style="{DynamicResource bsScrollViewerStyle}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
 
@@ -382,7 +382,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid Width="Auto" Height="Auto" Cursor="Hand">
-                            <Rectangle Stroke="#FF393939" RadiusX="1" RadiusY="1" HorizontalAlignment="Stretch" Width="Auto" x:Name="rectangle" StrokeThickness="3">
+                            <Rectangle Stroke="#FF393939" Radius="1" HorizontalAlignment="Stretch" Width="Auto" x:Name="rectangle" StrokeThickness="3">
                                 <Rectangle.Fill>
                                     <LinearGradientBrush EndPoint="0.5,-1.074" StartPoint="0.5,2.191">
                                         <GradientStop Color="#FF000000" Offset="0"/>
@@ -619,7 +619,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="55.5"/>
             </Grid.RowDefinitions>
-            <Rectangle Fill="{DynamicResource Brush1}" Stroke="#FF999999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" StrokeThickness="3" RadiusX="5" RadiusY="5" Grid.ColumnSpan="2" Grid.RowSpan="3" >
+            <Rectangle Fill="{DynamicResource Brush1}" Stroke="#FF999999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" StrokeThickness="3" Radius="5" Grid.ColumnSpan="2" Grid.RowSpan="3" >
                 <Rectangle.BitmapEffect>
                     <OuterGlowBitmapEffect GlowColor="#7F000000" GlowSize="15" Opacity="0.3"/>
                 </Rectangle.BitmapEffect>
@@ -645,7 +645,7 @@
                                 <TranslateTransform X="0" Y="0"/>
                             </TransformGroup>
                         </Canvas.RenderTransform>
-                        <Path StrokeThickness="10" Stroke="#ff000000" StrokeMiterLimit="1" Data="F1 M 302.564941,159.833984 L 6.651855,159.833984 L 51.451172,5 L 257.766113,5 L 302.564941,159.833984 Z" x:Name="shape" Fill="{DynamicResource blueBrush}"/>
+                        <Path StrokeThickness="10" Stroke="#ff000000" Data="F1 M 302.564941,159.833984 L 6.651855,159.833984 L 51.451172,5 L 257.766113,5 L 302.564941,159.833984 Z" x:Name="shape" Fill="{DynamicResource blueBrush}"/>
                         <Path Fill="#ff000000" Data="F1 M 172.153809,102.869141 C 172.137207,112.559570 164.296387,120.399414 154.608887,120.416016 L 154.608887,120.416016 C 144.918457,120.399414 137.077637,112.559570 137.061035,102.869141 L 137.061035,102.869141 C 137.061035,100.108398 134.821777,97.869141 132.061035,97.869141 L 132.061035,97.869141 C 129.300293,97.869141 127.061035,100.108398 127.061035,102.869141 L 127.061035,102.869141 C 127.064941,118.084961 139.393066,130.413086 154.608887,130.416992 L 154.608887,130.416992 C 169.822754,130.413086 182.151855,118.084961 182.154785,102.869141 L 182.154785,102.869141 C 182.154785,100.108398 179.916504,97.869141 177.153809,97.869141 L 177.153809,97.869141 C 174.393066,97.869141 172.153809,100.108398 172.153809,102.869141 L 172.153809,102.869141 Z" x:Name="mouth"/>
                         <Path Fill="#ff000000" Stretch="Fill" x:Name="ParallelEyes" Width="30" Height="34" Canvas.Left="139.608" Canvas.Top="34.417" Data="M23.5,0 C27.089844,0 30,2.9101563 30,6.5 L30,27.5 C30,31.089844 27.089844,34 23.5,34 19.910156,34 17,31.089844 17,27.5 L17,6.5 C17,2.9101563 19.910156,0 23.5,0 z M6.5,0 C10.089844,0 13,2.9101563 13,6.5 L13,27.5 C13,31.089844 10.089844,34 6.5,34 2.9101563,34 0,31.089844 0,27.5 L0,6.5 C0,2.9101563 2.9101563,0 6.5,0 z"/>
                     </Canvas>
@@ -678,7 +678,7 @@
                                 <TranslateTransform X="0" Y="0"/>
                             </TransformGroup>
                         </Canvas.RenderTransform>
-                        <Path StrokeThickness="10" Stroke="#ff000000" StrokeMiterLimit="1" Data="F1 M 126.578613,11.297852 L 162.373535,83.825684 L 242.412598,95.456055 L 184.495605,151.911133 L 198.167480,231.626953 L 126.578613,193.990234 L 54.988770,231.626953 L 68.661621,151.911133 L 10.744629,95.456055 L 90.783691,83.825684 L 126.578613,11.297852 Z" x:Name="starShape" Fill="{DynamicResource greenBrush}"/>
+                        <Path StrokeThickness="10" Stroke="#ff000000" Data="F1 M 126.578613,11.297852 L 162.373535,83.825684 L 242.412598,95.456055 L 184.495605,151.911133 L 198.167480,231.626953 L 126.578613,193.990234 L 54.988770,231.626953 L 68.661621,151.911133 L 10.744629,95.456055 L 90.783691,83.825684 L 126.578613,11.297852 Z" x:Name="starShape" Fill="{DynamicResource greenBrush}"/>
                         <Path Fill="#ff000000" Stretch="Fill" Width="56" Height="23" Canvas.Left="98.579" Canvas.Top="103.093" Data="M44.5,0 C50.851563,0 56,5.1489258 56,11.5 56,17.851074 50.851563,23 44.5,23 38.148438,23 33,17.851074 33,11.5 33,5.1489258 38.148438,0 44.5,0 z M11.5,0 C17.850586,0 23,5.1489258 23,11.5 23,17.851074 17.850586,23 11.5,23 5.1484375,23 0,17.851074 0,11.5 0,5.1489258 5.1484375,0 11.5,0 z" x:Name="StarEyes"/>
                         <Path Fill="#ff000000" Data="F1 M 139.507324,154.020020 C 139.507324,161.159668 133.717773,166.948242 126.578125,166.948242 C 119.438477,166.948242 113.649902,161.159668 113.649902,154.020020 C 113.649902,146.879883 119.438477,154.020020 126.578125,154.020020 C 133.717773,154.020020 139.507324,146.879883 139.507324,154.020020 Z" x:Name="mouth3"/>
                     </Canvas>
@@ -695,8 +695,8 @@
                             </TransformGroup>
                         </Canvas.RenderTransform>
                         <Ellipse StrokeThickness="10" Stroke="#ff000000"  Width="212.176" Height="212.176" Fill="{DynamicResource redBrush}"/>
-                        <Path StrokeThickness="10" Stroke="#ff000000" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeMiterLimit="1" Data="F1 M 58.970703,66.372070 C 64.513184,62.001953 71.509277,59.393555 79.114258,59.393555 C 86.719727,59.393555 93.715820,62.001953 99.258301,66.372070" x:Name="CircleEye1"/>
-                        <Path StrokeThickness="10" Stroke="#ff000000" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeMiterLimit="1" Data="F1 M 114.742188,66.372070 C 120.284180,62.001953 127.280273,59.393555 134.885742,59.393555 C 142.491211,59.393555 149.487305,62.001953 155.029297,66.372070" x:Name="CircleEye2"/>
+                        <Path StrokeThickness="10" Stroke="#ff000000" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="F1 M 58.970703,66.372070 C 64.513184,62.001953 71.509277,59.393555 79.114258,59.393555 C 86.719727,59.393555 93.715820,62.001953 99.258301,66.372070" x:Name="CircleEye1"/>
+                        <Path StrokeThickness="10" Stroke="#ff000000" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="F1 M 114.742188,66.372070 C 120.284180,62.001953 127.280273,59.393555 134.885742,59.393555 C 142.491211,59.393555 149.487305,62.001953 155.029297,66.372070" x:Name="CircleEye2"/>
                         <Path Fill="#ff000000" Data="F1 M 124.545898,151.451172 C 124.529297,161.141602 116.688477,168.981445 107.000977,168.998047 L 107.000977,168.998047 C 97.310547,168.981445 89.469727,161.141602 89.453125,151.451172 L 89.453125,151.451172 C 89.453125,148.690430 87.213867,146.451172 84.453125,146.451172 L 84.453125,146.451172 C 81.692383,146.451172 79.453125,148.690430 79.453125,151.451172 L 79.453125,151.451172 C 79.457031,166.666992 91.785156,178.995117 107.000977,178.999023 L 107.000977,178.999023 C 122.214844,178.995117 134.543945,166.666992 134.546875,151.451172 L 134.546875,151.451172 C 134.546875,148.690430 132.308594,146.451172 129.545898,146.451172 L 129.545898,146.451172 C 126.785156,146.451172 124.545898,148.690430 124.545898,151.451172 L 124.545898,151.451172 Z" x:Name="mouth4"/>
                     </Canvas>
 
@@ -712,7 +712,7 @@
                                 <TranslateTransform X="0" Y="0"/>
                             </TransformGroup>
                         </Canvas.RenderTransform>
-                        <Path StrokeThickness="10" Stroke="#ff000000" StrokeMiterLimit="1" Data="F1 M 61.853516,199.267578 L 5.773438,102.133789 L 61.853516,5 L 174.013672,5 L 230.093750,102.133789 L 174.013672,199.267578 L 61.853516,199.267578 Z" x:Name="hexagon" Fill="{DynamicResource orangeBrush}"/>
+                        <Path StrokeThickness="10" Stroke="#ff000000" Data="F1 M 61.853516,199.267578 L 5.773438,102.133789 L 61.853516,5 L 174.013672,5 L 230.093750,102.133789 L 174.013672,199.267578 L 61.853516,199.267578 Z" x:Name="hexagon" Fill="{DynamicResource orangeBrush}"/>
                         <Path Fill="#ff000000" Stretch="Fill" Width="55.59" Height="36.947" Canvas.Left="90.139" Canvas.Top="52.747" Data="M40.3125,0 L50.275391,0 C53.210938,0 55.589844,2.3793945 55.589844,5.3139648 L55.589844,36.946777 C52.250977,36.327637 48.813477,35.988281 45.294922,35.988281 41.776367,35.988281 38.338867,36.327637 35,36.946777 L35,5.3139648 C35,2.3793945 37.378906,0 40.3125,0 z M5.3125,0 L15.275391,0 C18.210938,0 20.589844,2.3793945 20.589844,5.3139648 L20.589844,36.946777 C17.250977,36.327637 13.813477,35.988281 10.294922,35.988281 6.7763672,35.988281 3.3388672,36.327637 0,36.946777 L0,5.3139648 C0,2.3793945 2.3789063,0 5.3125,0 z" x:Name="HexagonEyes"/>
                         <Path Fill="#ff000000" Data="F1 M 117.933594,135.528809 C 112.938477,135.528809 93.465820,133.640625 88.424805,132.747559 L 96.684570,165.867188 C 97.222656,168.024414 100.017578,169.694336 102.953125,169.694336 L 132.916016,169.694336 C 135.849609,169.694336 138.644531,168.024414 139.182617,165.867188 L 147.442383,132.747559 C 142.402344,133.640625 122.929688,135.528809 117.933594,135.528809 Z" x:Name="mouth1"/>
                     </Canvas>
