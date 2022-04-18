@@ -13,10 +13,9 @@ namespace BabySmash
 
         public override void OnFrameworkInitializationCompleted()
         {
-            Controller.Instance.Launch();
-
+            
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                desktop.MainWindow = new MainWindow(Controller.Instance);
+                Controller.Instance.Launch(desktop);
             
             base.OnFrameworkInitializationCompleted();
         }

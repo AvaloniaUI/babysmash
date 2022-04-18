@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Deployment.Application;
+using System.Collections.Generic; 
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interop;
-using Avalonia.Media;
-using Avalonia.Media.Animation;
-using Avalonia.Shapes;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Shapes;
+using Avalonia.Input; 
+using Avalonia.Media; 
 using Avalonia.Threading;
 using BabySmash.Properties;
-using KeyEventArgs = Avalonia.Input.KeyEventArgs;
-using MouseEventArgs = Avalonia.Input.MouseEventArgs;
-using WinForms = Avalonia.Forms;
 
 namespace BabySmash
 {
@@ -25,7 +19,6 @@ namespace BabySmash
     using System.IO;
     using System.Speech.Synthesis;
     using System.Text;
-
     using Newtonsoft.Json;
 
     public class Controller
@@ -45,18 +38,26 @@ namespace BabySmash
 
         private DispatcherTimer timer = new DispatcherTimer();
         private Queue<Shape> ellipsesQueue = new Queue<Shape>();
-        private Dictionary<string, List<UserControl>> figuresUserControlQueue = new Dictionary<string, List<UserControl>>();
-        private ApplicationDeployment deployment = null;
+
+        private Dictionary<string, List<UserControl>> figuresUserControlQueue =
+            new Dictionary<string, List<UserControl>>();
+
+        // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
+        // private ApplicationDeployment deployment = null;
         private WordFinder wordFinder = new WordFinder("Words.txt");
 
         /// <summary>Prevents a default instance of the Controller class from being created.</summary>
-        private Controller() { }
+        private Controller()
+        {
+        }
 
         public static Controller Instance
         {
             get { return instance; }
         }
 
+        // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
+        /*
         void deployment_CheckForUpdateCompleted(object sender, CheckForUpdateCompletedEventArgs e)
         {
             if (e.Error == null && e.UpdateAvailable)
@@ -93,14 +94,16 @@ namespace BabySmash
             }
             MainWindow w = this.windows[0];
             w.UpdateAvailableLabel.Visibility = Visibility.Hidden;
-        }
+        }*/
 
-        public void Launch()
+        public void Launch(IClassicDesktopStyleApplicationLifetime desktop)
         {
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 1);
             int Number = 0;
 
+            // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
+            /*
             if (ApplicationDeployment.IsNetworkDeployed)
             {
                 deployment = ApplicationDeployment.CurrentDeployment;
@@ -115,23 +118,42 @@ namespace BabySmash
                 {
                     Debug.WriteLine(e.ToString());
                 }
-            }
+            }*/
 
-            foreach (WinForms.Screen s in WinForms.Screen.AllScreens)
+
+            var defaultWindow = new MainWindow(this)
             {
-                MainWindow m = new MainWindow(this)
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                WindowState = WindowState.FullScreen,
+                SystemDecorations = SystemDecorations.None,
+                Topmost = true,
+                Background = (Settings.Default.TransparentBackground
+                    ? Brushes.Transparent
+                    : Brushes.WhiteSmoke),
+                Name = "Window" + Number++
+            };
+
+            desktop.MainWindow = desktop;
+            windows.Add(defaultWindow);
+
+            defaultWindow.PointerPressed += HandleMouseLeftButtonDown;
+            defaultWindow.PointerWheelChanged += HandleMouseWheel;
+
+            foreach (var s in defaultWindow.Screens.All)
+            {
+                var m = new MainWindow(this)
                 {
                     WindowStartupLocation = WindowStartupLocation.Manual,
-                    Left = s.WorkingArea.Left,
-                    Top = s.WorkingArea.Top,
+                    Position = s.WorkingArea.Position,
                     Width = s.WorkingArea.Width,
                     Height = s.WorkingArea.Height,
-                    WindowStyle = WindowStyle.None,
-                    ResizeMode = ResizeMode.NoResize,
+                    WindowState = WindowState.FullScreen,
+                    SystemDecorations = SystemDecorations.None,
                     Topmost = true,
-                    AllowsTransparency = Settings.Default.TransparentBackground,
-                    Background = (Settings.Default.TransparentBackground ? new SolidColorBrush(Color.FromArgb(1, 0, 0, 0)) : Brushes.WhiteSmoke),
-                    Name = "Window" + Number++.ToString()
+                    Background = (Settings.Default.TransparentBackground
+                        ? Brushes.Transparent
+                        : Brushes.WhiteSmoke),
+                    Name = "Window" + Number++
                 };
 
                 figuresUserControlQueue[m.Name] = new List<UserControl>();
@@ -139,12 +161,11 @@ namespace BabySmash
                 m.Show();
                 m.MouseLeftButtonDown += HandleMouseLeftButtonDown;
                 m.MouseWheel += HandleMouseWheel;
-                m.WindowState = WindowState.Maximized;
                 windows.Add(m);
             }
 
             //Only show the info label on the FIRST monitor.
-            windows[0].infoLabel.Visibility = Visibility.Visible;
+            windows[0].infoLabel.IsVisible = true;
 
             //Startup sound
             Win32Audio.PlayWavResourceYield("EditedJackPlaysBabySmash.wav");
@@ -152,17 +173,17 @@ namespace BabySmash
             string[] args = Environment.GetCommandLineArgs();
             string ext = System.IO.Path.GetExtension(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
 
-            if (ApplicationDeployment.IsNetworkDeployed && (ApplicationDeployment.CurrentDeployment.IsFirstRun || ApplicationDeployment.CurrentDeployment.UpdatedVersion != ApplicationDeployment.CurrentDeployment.CurrentVersion))
+            // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
+            /*if (ApplicationDeployment.IsNetworkDeployed && (ApplicationDeployment.CurrentDeployment.IsFirstRun || ApplicationDeployment.CurrentDeployment.UpdatedVersion != ApplicationDeployment.CurrentDeployment.CurrentVersion))
             {
                 //if someone made us a screensaver, then don't show the options dialog.
                 if ((args != null && args[0] != "/s") && String.CompareOrdinal(ext, ".SCR") != 0)
                 {
                     ShowOptionsDialog();
                 }
-            }
-#if !false
+            }*/
+
             timer.Start();
-#endif
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -190,7 +211,7 @@ namespace BabySmash
             {
                 uie.ReleaseMouseCapture();
             }
-            
+
             char displayChar = GetDisplayChar(e.Key);
             AddFigure(uie, displayChar);
         }
@@ -200,13 +221,13 @@ namespace BabySmash
             // If a number on the normal number track is pressed, display the number.
             if (key >= Key.D0 && key <= Key.D9)
             {
-                return (char)('0' + key - Key.D0);
+                return (char) ('0' + key - Key.D0);
             }
 
             // If a number on the numpad is pressed, display the number.
             if (key >= Key.NumPad0 && key <= Key.NumPad9)
             {
-                return (char)('0' + key - Key.NumPad0);
+                return (char) ('0' + key - Key.NumPad0);
             }
 
             try
@@ -230,13 +251,13 @@ namespace BabySmash
 
         [DllImport("user32.dll")]
         public static extern int ToUnicode(
-                uint wVirtKey,
-                uint wScanCode,
-                byte[] lpKeyState,
-                [Out, MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 4)]
-                        StringBuilder pwszBuff,
-                int cchBuff,
-                uint wFlags);
+            uint wVirtKey,
+            uint wScanCode,
+            byte[] lpKeyState,
+            [Out, MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 4)]
+            StringBuilder pwszBuff,
+            int cchBuff,
+            uint wFlags);
 
         [DllImport("user32.dll")]
         public static extern bool GetKeyboardState(byte[] lpKeyState);
@@ -252,10 +273,11 @@ namespace BabySmash
             byte[] keyboardState = new byte[256];
             GetKeyboardState(keyboardState);
 
-            uint scanCode = MapVirtualKey((uint)virtualKey, MapType.MAPVK_VK_TO_VSC);
+            uint scanCode = MapVirtualKey((uint) virtualKey, MapType.MAPVK_VK_TO_VSC);
             StringBuilder stringBuilder = new StringBuilder(2);
 
-            int result = ToUnicode((uint)virtualKey, scanCode, keyboardState, stringBuilder, stringBuilder.Capacity, 0);
+            int result = ToUnicode((uint) virtualKey, scanCode, keyboardState, stringBuilder, stringBuilder.Capacity,
+                0);
             switch (result)
             {
                 case -1:
@@ -263,16 +285,17 @@ namespace BabySmash
                 case 0:
                     break;
                 case 1:
-                    {
-                        ch = stringBuilder[0];
-                        break;
-                    }
+                {
+                    ch = stringBuilder[0];
+                    break;
+                }
                 default:
-                    {
-                        ch = stringBuilder[0];
-                        break;
-                    }
+                {
+                    ch = stringBuilder[0];
+                    break;
+                }
             }
+
             return ch;
         }
 
@@ -298,8 +321,8 @@ namespace BabySmash
                 Canvas.SetTop(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Height - f.Height)));
 
                 Storyboard storyboard = Animation.CreateDPAnimation(uie, f,
-                                UIElement.OpacityProperty,
-                                new Duration(TimeSpan.FromSeconds(Settings.Default.FadeAfter)), 1, 0);
+                    UIElement.OpacityProperty,
+                    new Duration(TimeSpan.FromSeconds(Settings.Default.FadeAfter)), 1, 0);
                 if (Settings.Default.FadeAway) storyboard.Begin(uie);
 
                 IHasFace face = f as IHasFace;
@@ -358,7 +381,7 @@ namespace BabySmash
         //   container.Children.Remove(toBeRemoved);
         //}
 
-        void HandleMouseWheel(object sender, MouseWheelEventArgs e)
+        void HandleMouseWheel(object sender, PointerWheelEventArgs pointerWheelEventArgs)
         {
             UserControl foo = sender as UserControl; //expected this on Sender!
             if (foo != null)
@@ -374,7 +397,7 @@ namespace BabySmash
             }
         }
 
-        void HandleMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void HandleMouseLeftButtonDown(object sender, PointerPressedEventArgs e)
         {
             UserControl f = e.Source as UserControl;
             if (f != null && f.Opacity > 0.1) //can it be seen? 
@@ -391,6 +414,7 @@ namespace BabySmash
             {
                 PlayLaughter();
             }
+
             if (objSpeech != null && Settings.Default.Sounds == "Speech")
             {
                 if (template.Letter != null && template.Letter.Length == 1 && Char.IsLetterOrDigit(template.Letter[0]))
@@ -425,7 +449,8 @@ namespace BabySmash
 
             if (jsonConfig != null)
             {
-                Dictionary<string, object> config = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonConfig);
+                Dictionary<string, object> config =
+                    JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonConfig);
                 if (config.ContainsKey(key))
                 {
                     return config[key].ToString();
@@ -454,6 +479,7 @@ namespace BabySmash
         {
             private string Word = null;
             SpeechSynthesizer SpeechSynth = new SpeechSynthesizer();
+
             public ThreadedSpeak(string Word)
             {
                 this.Word = Word;
@@ -485,11 +511,13 @@ namespace BabySmash
                 SpeechSynth.Rate = -1;
                 SpeechSynth.Volume = 100;
             }
+
             public void Speak()
             {
                 Thread oThread = new Thread(new ThreadStart(this.Start));
                 oThread.Start();
             }
+
             private void Start()
             {
                 try
@@ -513,6 +541,7 @@ namespace BabySmash
             {
                 m.Topmost = false;
             }
+
             o.Topmost = true;
             o.Focus();
             o.ShowDialog();
@@ -522,13 +551,14 @@ namespace BabySmash
                 m.Topmost = true;
                 //m.ResetCanvas();
             }
+
             isOptionsDialogShown = false;
 
             if (foo != Settings.Default.TransparentBackground)
             {
                 MessageBoxResult result = MessageBox.Show(
-                        "You've changed the Window Transparency Option. We'll need to restart BabySmash! for you to see the change. Pressing YES will restart BabySmash!. Is that OK?",
-                        "Need to Restart", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    "You've changed the Window Transparency Option. We'll need to restart BabySmash! for you to see the change. Pressing YES will restart BabySmash!. Is that OK?",
+                    "Need to Restart", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     Application.Current.Shutdown();
@@ -576,6 +606,7 @@ namespace BabySmash
                 main.ReleaseMouseCapture();
                 return;
             }
+
             if (Settings.Default.MouseDraw && main.IsMouseCaptured == false)
                 main.CaptureMouse();
 
