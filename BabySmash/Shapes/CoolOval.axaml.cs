@@ -3,7 +3,6 @@
 namespace BabySmash
 {
     using System;
-    using Avalonia;
     using Avalonia.Media;
 
     /// <summary>   

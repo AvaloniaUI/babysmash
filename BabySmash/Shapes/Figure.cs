@@ -1,5 +1,3 @@
-using Avalonia;
-
 namespace BabySmash
 {
     public interface IHasFace

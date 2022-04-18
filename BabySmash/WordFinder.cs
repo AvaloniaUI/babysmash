@@ -8,8 +8,7 @@ using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Media.Animation;
-
+ 
 namespace BabySmash
 {
     public class WordFinder
