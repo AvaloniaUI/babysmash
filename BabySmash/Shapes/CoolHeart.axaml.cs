@@ -12,12 +12,12 @@ namespace BabySmash
     {
         public CoolHeart(Brush x) : this()
         {
-            this.Body.Fill = x;
+            Body.Fill = x;
         }
 
         public CoolHeart()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
         
         public bool IsFaceVisible { get; set; }

@@ -17,7 +17,7 @@ namespace BabySmash
 
         public CoolTriangle()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
         
         public bool IsFaceVisible { get; set; }

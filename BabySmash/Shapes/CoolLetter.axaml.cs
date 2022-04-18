@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using BabySmash.Properties;
@@ -16,17 +14,18 @@ namespace BabySmash
     {
         public CoolLetter()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public CoolLetter(Brush x, char letter) : this()
         {
-            this.Character = letter;
-            this.letterPath.Fill = x;
-
-         //   this.letterPath.Data = MakeCharacterGeometry(GetLetterCharacter(letter));
-            this.Width = this.letterPath.Data.Bounds.Width + this.letterPath.Data.Bounds.X + this.letterPath.StrokeThickness / 2;
-            this.Height = this.letterPath.Data.Bounds.Height + this.letterPath.Data.Bounds.Y + this.letterPath.StrokeThickness / 2;
+            Character = letter;
+            letterPath.Foreground = x;
+            letterPath.Text = letter.ToString();
+            
+            // this.letterPath.Data = MakeCharacterGeometry(GetLetterCharacter(letter));
+            // this.Width = this.letterPath.Data.Bounds.Width + this.letterPath.Data.Bounds.X + this.letterPath.StrokeThickness / 2;
+            // this.Height = this.letterPath.Data.Bounds.Height + this.letterPath.Data.Bounds.Y + this.letterPath.StrokeThickness / 2;
         }
 
         public char Character { get; private set; }

@@ -17,7 +17,7 @@ namespace BabySmash
         
         public CoolStar()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
         
         public bool IsFaceVisible { get; set; }

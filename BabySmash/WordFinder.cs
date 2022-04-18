@@ -8,7 +8,7 @@ using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
- 
+
 namespace BabySmash
 {
     public class WordFinder
@@ -22,7 +22,7 @@ namespace BabySmash
         public WordFinder(string wordsFilePath)
         {
             // File path provided should be relative to our running location, so combine for full path safety.
-            string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             wordsFilePath = Path.Combine(dir, wordsFilePath);
 
             // Bail if the source word file is not found.
@@ -34,19 +34,19 @@ namespace BabySmash
             }
 
             // Load up the string dictionary in the background.
-            Thread t = new Thread(() =>
+            var t = new Thread(() =>
             {
                 // Read through the word file and create a hashtable entry for each one with some 
                 // further parsed word data (such as various game scores, etc)
-                StreamReader sr = new StreamReader(wordsFilePath);
-                string s = sr.ReadLine();
+                var sr = new StreamReader(wordsFilePath);
+                var s = sr.ReadLine();
                 while (s != null)
                 {
                     // Ignore invalid lines, comment lines, or words which are too short or too long.
                     if (!s.Contains(";") && !s.Contains("/") && !s.Contains("\\") &&
                         s.Length >= MinimumWordLength && s.Length <= MaximumWordLength)
                     {
-                        this.words.Add(s.ToUpper());
+                        words.Add(s.ToUpper());
                     }
 
                     s = sr.ReadLine();
@@ -64,8 +64,8 @@ namespace BabySmash
         public string LastWord(List<UserControl> figuresQueue)
         {
             // If not done loading, or could not yet form a word based on queue length, just abort.
-            int figuresPos = figuresQueue.Count - 1;
-            if (!this.wordsReady || figuresPos < MinimumWordLength - 1)
+            var figuresPos = figuresQueue.Count - 1;
+            if (!wordsReady || figuresPos < MinimumWordLength - 1)
             {
                 return null;
             }
@@ -75,7 +75,7 @@ namespace BabySmash
             // that we JUST now finished typing.
             string longestWord = null;
             var stringToCheck = new StringBuilder();
-            int lowestIndexToCheck = Math.Max(0, figuresPos - MaximumWordLength);
+            var lowestIndexToCheck = Math.Max(0, figuresPos - MaximumWordLength);
             while (figuresPos >= lowestIndexToCheck)
             {
                 var lastFigure = figuresQueue[figuresPos] as CoolLetter;
@@ -89,8 +89,8 @@ namespace BabySmash
 
                 // Build up the string and check to see if it is a word so far.
                 stringToCheck.Insert(0, lastFigure.Character);
-                string s = stringToCheck.ToString();
-                if (this.words.Contains(stringToCheck.ToString()) && s.Length >= MinimumWordLength)
+                var s = stringToCheck.ToString();
+                if (words.Contains(stringToCheck.ToString()) && s.Length >= MinimumWordLength)
                 {
                     // Since we're progressively checking longer and longer letter combinations,
                     // each time we find a word, it is our new "longest" word so far.
@@ -106,18 +106,18 @@ namespace BabySmash
         public void AnimateLettersIntoWord(List<UserControl> figuresQueue, string lastWord)
         {
             // Prepare to animate the letters into their respective positions, on each screen.
-            TimeSpan duration = TimeSpan.FromMilliseconds(1200);
-            int totalLetters = lastWord.Length;
+            var duration = TimeSpan.FromMilliseconds(1200);
+            var totalLetters = lastWord.Length;
 
-            Point wordCenter = this.FindWordCenter(figuresQueue, totalLetters);
-            Point wordSize = this.FindWordSize(figuresQueue, totalLetters);
-            double wordLeftEdge = wordCenter.X - wordSize.X / 2f;
+            var wordCenter = FindWordCenter(figuresQueue, totalLetters);
+            var wordSize = FindWordSize(figuresQueue, totalLetters);
+            var wordLeftEdge = wordCenter.X - wordSize.X / 2f;
 
             // Figure out where to move each letter used in the word; find the letters used based on
             // the word length; they are the last several figures in the figures queue.
-            for (int i = figuresQueue.Count - 1; i >= figuresQueue.Count - totalLetters; i--)
+            for (var i = figuresQueue.Count - 1; i >= figuresQueue.Count - totalLetters; i--)
             {
-                UserControl currentFigure = figuresQueue[i];
+                var currentFigure = figuresQueue[i];
 
                 // Find the translation animation of this element, or make one if there is not one yet.
                 var transformGroup = currentFigure.RenderTransform as TransformGroup;
@@ -126,8 +126,8 @@ namespace BabySmash
                 // We know where we want to center the word, and the word's left edge based on figure
                 // sizes, and now just need to figure out how far from that left edge we need to adjust
                 // to make this letter move to the correct relative position to spell out the word.
-                double wordOffsetX = 0d;
-                for (int j = figuresQueue.Count - totalLetters; j < i; j++)
+                var wordOffsetX = 0d;
+                for (var j = figuresQueue.Count - totalLetters; j < i; j++)
                 {
                     wordOffsetX += figuresQueue[j].Width;
                 }

@@ -1,9 +1,9 @@
-﻿namespace BabySmash.Extensions
-{
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Reflection;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
+namespace BabySmash.Extensions
+{
     /// <summary>
     /// Contains extension methods for objects
     /// </summary>
@@ -21,7 +21,7 @@
 
         public static FieldInfo GetField(this Type ownerType, Type valueType, string fieldName)
         {
-            FieldInfo field = ownerType.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            var field = ownerType.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             if (field == null)
             {
                 throw new ArgumentException($"Failed to find field '{fieldName}' on type {ownerType.FullName}.");
@@ -48,7 +48,7 @@
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "ReadField", Justification = "'Read' is a clear verb and 'field value' is the subject.")]
         public static TValue ReadFieldValue<TOwner, TValue>(this TOwner owner, string fieldName)
         {
-            FieldInfo field = GetField(typeof(TOwner), typeof(TValue), fieldName);
+            var field = GetField(typeof(TOwner), typeof(TValue), fieldName);
             return (TValue)field.GetValue(owner);
         }
 
@@ -64,7 +64,7 @@
         /// <exception cref="CatalystException">When field is not found or it is of incorrect type.</exception>
         public static void WriteFieldValue<TOwner, TValue>(this TOwner owner, string fieldName, TValue value)
         {
-            FieldInfo field = GetField(typeof(TOwner), typeof(TValue), fieldName);
+            var field = GetField(typeof(TOwner), typeof(TValue), fieldName);
             field.SetValue(owner, value);
         }
     }

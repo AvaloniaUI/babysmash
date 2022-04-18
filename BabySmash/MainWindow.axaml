@@ -5,7 +5,7 @@
         Title="Baby Smash by Scott Hanselman - http://www.hanselman.com/babysmash"
         Height="500" Width="500" SystemDecorations="None" HorizontalAlignment="Center" VerticalAlignment="Center"> 
     <Window.KeyBindings>
-        <KeyBinding Gesture="CTRL+ALT+SHIFT+O" Command="{Binding $self.Properties_Executed}" />
+        <KeyBinding Gesture="Ctrl+Alt+Shift+O" Command="{Binding ShowOptionsDialog}" />
     </Window.KeyBindings>
     
     <Grid Name="mainGrid">

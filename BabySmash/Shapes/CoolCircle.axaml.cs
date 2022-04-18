@@ -14,12 +14,12 @@ namespace BabySmash
 
         public CoolCircle(Brush x) : this()
         {
-            this.Body.Fill = x;
+            Body.Fill = x;
         }
 
         public CoolCircle()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
          
         /// <inheritdoc />

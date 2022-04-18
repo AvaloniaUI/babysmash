@@ -17,7 +17,7 @@ namespace BabySmash
 
         public CoolTrapezoid()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
         
         public bool IsFaceVisible { get; set; }

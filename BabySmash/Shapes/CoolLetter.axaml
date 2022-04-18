@@ -10,8 +10,8 @@
 
 	<Grid x:Name="LayoutRoot">
 		<Canvas x:Name="Letter" >
-			<Path x:Name="letterPath" StrokeThickness="10" Stroke="#ff000000"  >
-				<Path.Fill>
+			<TextBlock x:Name="letterPath" FontSize="300">
+				<TextBlock.Foreground>
 					<RadialGradientBrush GradientOrigin="123,198" Center="123,198" Radius="102">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-16,305" />
@@ -19,8 +19,8 @@
 						<GradientStop Offset="0" Color="#ffffff00"/>
 						<GradientStop Offset="1" Color="#ff98ff00"/>
 					</RadialGradientBrush>
-				</Path.Fill>
-			</Path>
+				</TextBlock.Foreground>
+			</TextBlock>
 		</Canvas>
 	</Grid>
 </UserControl>

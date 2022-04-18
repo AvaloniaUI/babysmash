@@ -1,10 +1,9 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using Avalonia.Controls;
+using Avalonia.Media;
 
 namespace BabySmash
 {
-    using System;
-    using Avalonia.Media;
-
     /// <summary>   
     /// Interaction logic for CoolOval.xaml
     /// </summary>
@@ -13,12 +12,12 @@ namespace BabySmash
     {
         public CoolOval(Brush x) : this()
         {
-            this.Body.Fill = x;
+            Body.Fill = x;
         }
 
         public CoolOval()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
         
         public bool IsFaceVisible { get; set; }

@@ -34,7 +34,7 @@ namespace BabySmash
             //TODO: Implement audio playback on all 3 desktop platforms:
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
-            byte[] arrWav = GetWavResource(wav);
+            var arrWav = GetWavResource(wav);
             PlaySound(arrWav, IntPtr.Zero, SND_ASYNC | SND_MEMORY);
         }
 
@@ -43,7 +43,7 @@ namespace BabySmash
             //TODO: Implement audio playback on all 3 desktop platforms:
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
-            byte[] arrWav = GetWavResource(wav);
+            var arrWav = GetWavResource(wav);
             PlaySound(arrWav, IntPtr.Zero, SND_ASYNC | SND_NOSTOP | SND_MEMORY);
         }
 
@@ -64,10 +64,10 @@ namespace BabySmash
                     return cachedWavs[wav];
                 }
 
-                string strName = Assembly.GetExecutingAssembly().GetName().Name + wav;
+                var strName = Assembly.GetExecutingAssembly().GetName().Name + wav;
 
                 // get the resource into a stream
-                using (Stream strm = Assembly.GetExecutingAssembly().GetManifestResourceStream(strName))
+                using (var strm = Assembly.GetExecutingAssembly().GetManifestResourceStream(strName))
                 {
                     var arrWav = new Byte[strm.Length];
                     strm.Read(arrWav, 0, (int)strm.Length);

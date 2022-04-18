@@ -1,37 +1,60 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using System.ComponentModel;
+using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 
 namespace BabySmash
 {
     public partial class MainWindow : Window
     {
-         public Controller Controller { get; set; }
+        public Controller Controller { get; set; }
 
-        private UserControl customCursor;
-        public UserControl CustomCursor { get { return customCursor; } set { customCursor = value; } }
-        
+        private readonly IDisposable _handler;
+
+        public UserControl CustomCursor { get; set; }
+
         public void AddFigure(UserControl c)
         {
-            this.figuresCanvas.Children.Add(c);
+            figuresCanvas.Children.Add(c);
         }
-        
+
         public void RemoveFigure(UserControl c)
         {
-            this.figuresCanvas.Children.Remove(c);
+            figuresCanvas.Children.Remove(c);
         }
-        
+
         public MainWindow()
-        { 
+        {
             InitializeComponent();
-        
-            //ResetCanvas();
+            _handler = this.AddDisposableHandler(TextInputEvent, RoutedTextInput, RoutingStrategies.Tunnel);
         }
-        //
-        // protected override void OnMouseWheel(MouseWheelEventArgs e)
-        // {
-        //     base.OnMouseWheel(e);
-        //     controller.MouseWheel(this, e);
-        // }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            _handler?.Dispose();
+            base.OnClosing(e);
+        }
+
+        private void RoutedTextInput(object? sender, TextInputEventArgs? e)
+        {
+            if (e is null)
+                return;
+
+            e.Handled = true;
+
+            foreach (var inChar in e.Text ?? string.Empty)
+            {
+                Controller.ProcessChar(this, inChar);
+            }
+        }
+
+        /// <inheritdoc />
+        protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
+        { 
+            Controller.MouseWheel(this, e);
+        }
+        
         //
         // protected override void OnMouseUp(MouseButtonEventArgs e)
         // {
@@ -75,12 +98,6 @@ namespace BabySmash
         //     controller.MouseMove(this, e);
         // }
 
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            base.OnKeyUp(e);
-            e.Handled = true;
-            Controller.ProcessKey(this, e);
-        }
         //
         // protected override void OnLostMouseCapture(MouseEventArgs e)
         // {
@@ -109,9 +126,5 @@ namespace BabySmash
         //     }
         // }
         //
-        // public void Properties_Executed()
-        // {
-        //     controller.ShowOptionsDialog();
-        // }
     }
 }

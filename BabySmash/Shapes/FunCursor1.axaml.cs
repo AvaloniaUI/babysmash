@@ -9,7 +9,7 @@ namespace BabySmash
     {
         public FunCursor1()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

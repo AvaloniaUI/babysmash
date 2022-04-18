@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
+using BabySmash.Properties;
 
 namespace BabySmash
 {
@@ -46,13 +48,13 @@ namespace BabySmash
 
         public static Color GetRandomColor()
         {
-            Color color = someColors[lRandom.Next(0, someColors.Length)];
+            var color = someColors[lRandom.Next(0, someColors.Length)];
             return color;
         }
 
         public static Brush GetGradientBrush(Color color)
         {
-            RadialGradientBrush myBrush = new RadialGradientBrush();
+            var myBrush = new RadialGradientBrush();
             myBrush.GradientOrigin = new RelativePoint(0.75, 0.25, RelativeUnit.Relative);
             myBrush.GradientStops.Add(new GradientStop(color.LightenOrDarken(50), 0.0));
             myBrush.GradientStops.Add(new GradientStop(color, 0.5));
@@ -92,9 +94,9 @@ namespace BabySmash
             return lRandom.Next(min, max + 1);
         }
 
-        internal static Avalonia.Controls.UserControl GetCursor()
+        internal static UserControl GetCursor()
         {
-            switch (Properties.Settings.Default.CursorType)
+            switch (Settings.Default.CursorType)
             {
                 case "Hand":
                     return fun2;

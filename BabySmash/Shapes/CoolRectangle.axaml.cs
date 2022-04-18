@@ -14,12 +14,12 @@ namespace BabySmash
 
         public CoolRectangle(Brush x) : this()
         {
-            this.Body.Fill = x;
+            Body.Fill = x;
         }
 
         public CoolRectangle()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
          
         public bool IsFaceVisible { get; set; }

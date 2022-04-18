@@ -1,28 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using BabySmash.Properties;
+using Newtonsoft.Json;
+using Path = System.IO.Path;
 
 namespace BabySmash
 {
-    using System.Globalization;
-    using System.IO;
-    using Newtonsoft.Json;
-
     public class Controller
     {
-        private static Controller instance = new Controller();
-
         public bool isOptionsDialogShown { get; set; }
-        private bool isDrawing = false;
+        private bool isDrawing;
 
         // TODO: Disabled Speech features since it's not cross platform compatible as well.
         // private readonly SpeechSynthesizer objSpeech = new SpeechSynthesizer();
@@ -43,10 +45,7 @@ namespace BabySmash
         {
         }
 
-        public static Controller Instance
-        {
-            get { return instance; }
-        }
+        public static Controller Instance { get; } = new Controller();
 
         // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
         /*
@@ -90,9 +89,7 @@ namespace BabySmash
 
         public void Launch(IClassicDesktopStyleApplicationLifetime desktop)
         {
-            timer.Tick += timer_Tick;
-            timer.Interval = TimeSpan.FromSeconds(1);
-            int Number = 0;
+            var Number = 0;
 
             // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
             /*
@@ -151,7 +148,6 @@ namespace BabySmash
             }
 
             dummyWindow.Close();
-            dummyWindow = null;
 
             //Only show the info label on the FIRST monitor.
             windows[0].infoLabel.IsVisible = true;
@@ -160,7 +156,7 @@ namespace BabySmash
             Win32Audio.PlayWavResourceYield("EditedJackPlaysBabySmash.wav");
 
             string[] args = Environment.GetCommandLineArgs();
-            string ext = System.IO.Path.GetExtension(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+            var ext = Path.GetExtension(Assembly.GetExecutingAssembly().CodeBase);
 
             // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
             /*if (ApplicationDeployment.IsNetworkDeployed && (ApplicationDeployment.CurrentDeployment.IsFirstRun || ApplicationDeployment.CurrentDeployment.UpdatedVersion != ApplicationDeployment.CurrentDeployment.CurrentVersion))
@@ -171,88 +167,72 @@ namespace BabySmash
                     ShowOptionsDialog();
                 }
             }*/
-
-            timer.Start();
         }
 
-        void timer_Tick(object sender, EventArgs e)
+        public void ProcessChar(Control uie, char inChar)
         {
-            if (isOptionsDialogShown)
-            {
-                return;
-            }
-
-            windows[0].Focus();
-        }
-
-        public void ProcessKey(Control uie, KeyEventArgs e)
-        {
-            char displayChar = GetDisplayChar(e.Key);
-            AddFigure(uie, displayChar);
-        }
-
-        private char GetDisplayChar(Key key)
-        {
-            // If a number on the normal number track is pressed, display the number.
-            if (key >= Key.D0 && key <= Key.D9)
-            {
-                return (char) ('0' + key - Key.D0);
-            }
-
-            // If a number on the numpad is pressed, display the number.
-            if (key >= Key.NumPad0 && key <= Key.NumPad9)
-            {
-                return (char) ('0' + key - Key.NumPad0);
-            }
-
-            return char.MinValue;
-
-            // try
-            // {
-            //     return char.ToUpperInvariant(TryGetLetter(key));
-            // }
-            // catch (Exception ex)
-            // {
-            //     Debug.Assert(false, ex.ToString());
-            //     return '*';
-            // }
+            AddFigure(uie, inChar);
         }
 
         private void AddFigure(Control uie, char c)
         {
             var template = FigureGenerator.GenerateFigureTemplate(c);
-            foreach (MainWindow window in this.windows)
+            foreach (var window in windows)
             {
-                var f = FigureGenerator.NewUserControlFrom(template);
-                f.Classes.Add("shapes");
+                var figure = FigureGenerator.NewUserControlFrom(template);
+                AnimationHelpers.ApplyRandomAnimationEffect(figure);
 
-                window.AddFigure(f);
+                figure.Classes.Add("shapes");
+
+                window.AddFigure(figure);
 
                 var queue = figuresUserControlQueue[window.Classes.First()];
-                queue.Add(f);
+                queue.Add(figure);
 
                 // Letters should already have accurate width and height, but others may them assigned.
-                if (double.IsNaN(f.Width) || double.IsNaN(f.Height))
+                if (double.IsNaN(figure.Width) || double.IsNaN(figure.Height))
                 {
-                    f.Width = 300;
-                    f.Height = 300;
+                    figure.Width = 300;
+                    figure.Height = 300;
                 }
 
-                f.ClipToBounds = false;
+                figure.ClipToBounds = false;
 
-                Canvas.SetLeft(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Width - f.Width)));
-                Canvas.SetTop(f, Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Height - f.Height)));
+                Canvas.SetLeft(figure,
+                    Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Width - figure.Width)));
+                Canvas.SetTop(figure,
+                    Utils.RandomBetweenTwoNumbers(0, Convert.ToInt32(window.Bounds.Height - figure.Height)));
 
-                // Storyboard storyboard = Animation.CreateDPAnimation(uie, f,
-                //     UIElement.OpacityProperty,
-                //     new Duration(TimeSpan.FromSeconds(Settings.Default.FadeAfter)), 1, 0);
- 
                 if (Settings.Default.FadeAway)
                 {
-                    f.Classes.Add("fadeAfter");
+                    var fadeOut = new Avalonia.Animation.Animation
+                    {
+                        Delay = TimeSpan.FromSeconds(Settings.Default.FadeAfter),
+                        Duration = TimeSpan.FromSeconds(2),
+                        Children =
+                        {
+                            new KeyFrame
+                            {
+                                Cue = new Cue(0),
+                                Setters =
+                                {
+                                    new Setter(Visual.OpacityProperty, 1d)
+                                }
+                            },
+                            new KeyFrame
+                            {
+                                Cue = new Cue(1),
+                                Setters =
+                                {
+                                    new Setter(Visual.OpacityProperty, 0d)
+                                }
+                            }
+                        }
+                    };
+                    fadeOut.RunAsync(figure, null);
                 }
-                
-                if (f is IHasFace face)
+
+                if (figure is IHasFace face)
                 {
                     face.IsFaceVisible = Settings.Default.FacesOnShapes;
                 }
@@ -262,73 +242,40 @@ namespace BabySmash
                 window.RemoveFigure(queue[0]);
                 queue.RemoveAt(0);
             }
-            //
-            // // Find the last word typed, if applicable.
-            // string lastWord = this.wordFinder.LastWord(figuresUserControlQueue.Values.First());
-            // if (lastWord != null)
-            // {
-            //     foreach (MainWindow window in this.windows)
-            //     {
-            //         this.wordFinder.AnimateLettersIntoWord(figuresUserControlQueue[window.Name], lastWord);
-            //     }
-            //
-            //     SpeakString(lastWord);
-            // }
-            // else
-            // {
-            //     PlaySound(template);
-            // }
+
+            // Find the last word typed, if applicable.
+            var lastWord = wordFinder.LastWord(figuresUserControlQueue.Values.First());
+            if (!string.IsNullOrEmpty(lastWord))
+            {
+                foreach (var window in windows)
+                {
+                    wordFinder.AnimateLettersIntoWord(figuresUserControlQueue[window.Classes.First()], lastWord);
+                }
+
+                SpeakString(lastWord);
+            }
+            else
+            {
+                PlaySound(template);
+            }
         }
-
-        //private static DoubleAnimationUsingKeyFrames ApplyZoomOut(UserControl u)
-        //{
-        //   Tweener.TransitionType rt1 = Tweener.TransitionType.EaseOutExpo;
-        //   var ani1 = Tweener.Tween.CreateAnimation(rt1, 1, 0, TimeSpan.FromSeconds(0.5));
-        //   u.RenderTransformOrigin = new Point(0.5, 0.5);
-        //   var group = new TransformGroup();
-        //   u.RenderTransform = group;
-
-        //   ani1.Completed += new EventHandler(ani1_Completed); 
-
-        //   group.Children.Add(new ScaleTransform());
-        //   group.Children[0].BeginAnimation(ScaleTransform.ScaleXProperty, ani1);
-        //   group.Children[0].BeginAnimation(ScaleTransform.ScaleYProperty, ani1);
-        //   return ani1;
-        //}
-
-        //static void ani1_Completed(object sender, EventArgs e)
-        //{
-        //   AnimationClock clock = sender as AnimationClock;
-        //   Debug.Write(sender.ToString());
-        //   UserControl foo = sender as UserControl;
-        //   UserControl toBeRemoved = queue.Dequeue() as UserControl;
-        //   Canvas container = toBeRemoved.Parent as Canvas;
-        //   container.Children.Remove(toBeRemoved);
-        //}
 
         void HandleMouseWheel(object sender, PointerWheelEventArgs e)
         {
-            UserControl foo = sender as UserControl; //expected this on Sender!
-            if (foo != null)
+            if (sender is not UserControl foo || !foo.Classes.Contains("shape")) return;
+            if (e.Delta.Y < 0)
             {
-                if (e.Delta.Y < 0)
-                {
-                    // Animation.ApplyZoom(foo, new Duration(TimeSpan.FromSeconds(0.5)), 2.5);
-                }
-                else
-                {
-                    // Animation.ApplyZoom(foo, new Duration(TimeSpan.FromSeconds(0.5)), 0.5);
-                }
+                 AnimationHelpers.ApplyZoom(foo, TimeSpan.FromSeconds(0.5), 2.5);
             }
         }
 
         void HandleMouseLeftButtonDown(object sender, PointerPressedEventArgs e)
         {
-            UserControl f = e.Source as UserControl;
+            var f = e.Source as UserControl;
             if (f != null && f.Opacity > 0.1) //can it be seen? 
             {
                 isDrawing = true; //HACK: This is a cheat to stop the mouse draw action.
-                // Animation.ApplyRandomAnimationEffect(f, Duration.Automatic);
+                AnimationHelpers.ApplyRandomAnimationEffect(f);
                 PlayLaughter(); //Might be better to re-speak the name, color, etc.
             }
         }
@@ -360,14 +307,12 @@ namespace BabySmash
         /// </summary>
         public static string GetLocalizedString(string key)
         {
-            var keyboardLanguage = CultureInfo.CurrentCulture;
-            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>()!;
+            var path = new Uri($@"avares://BabySmash/Resources/Strings/{CultureInfo.CurrentCulture}.json");
+            var path2 = new Uri(@"avares://BabySmash/Resources/Strings/en-EN.json");
 
-            string culture = keyboardLanguage.Name;
-            var path = new Uri($@"avares://BabySmash/Resources/Strings/{culture}.json");
-            var path2 = new Uri($@"avares://BabySmash/Resources/Strings/en-EN.json");
+            var jsonConfig = string.Empty;
 
-            string jsonConfig = null;
             if (assets.Exists(path))
             {
                 using var s = new StreamReader(assets.Open(path));
@@ -379,9 +324,9 @@ namespace BabySmash
                 jsonConfig = s.ReadToEnd();
             }
 
-            if (jsonConfig != null)
+            if (!string.IsNullOrEmpty(jsonConfig))
             {
-                Dictionary<string, object> config =
+                var config =
                     JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonConfig);
                 if (config.ContainsKey(key))
                 {
@@ -390,7 +335,7 @@ namespace BabySmash
             }
             else
             {
-                System.Diagnostics.Debug.Assert(false, "No file");
+                Debug.Assert(false, "No file");
             }
 
             return key;
@@ -468,41 +413,28 @@ namespace BabySmash
             }
         }*/
 
-        // public void ShowOptionsDialog()
-        // {
-        //     bool foo = Settings.Default.TransparentBackground;
-        //     isOptionsDialogShown = true;
-        //     var o = new Options();
-        //     Mouse.Capture(null);
-        //     foreach (MainWindow m in this.windows)
-        //     {
-        //         m.Topmost = false;
-        //     }
-        //
-        //     o.Topmost = true;
-        //     o.Focus();
-        //     o.ShowDialog();
-        //     Debug.Write("test");
-        //     foreach (MainWindow m in this.windows)
-        //     {
-        //         m.Topmost = true;
-        //         //m.ResetCanvas();
-        //     }
-        //
-        //     isOptionsDialogShown = false;
-        //
-        //     if (foo != Settings.Default.TransparentBackground)
-        //     {
-        //         MessageBoxResult result = MessageBox.Show(
-        //             "You've changed the Window Transparency Option. We'll need to restart BabySmash! for you to see the change. Pressing YES will restart BabySmash!. Is that OK?",
-        //             "Need to Restart", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        //         if (result == MessageBoxResult.Yes)
-        //         {
-        //             Application.Current.Shutdown();
-        //             Avalonia.Forms.Application.Restart();
-        //         }
-        //     }
-        // }
+        public async void ShowOptionsDialog()
+        {
+            var foo = Settings.Default.TransparentBackground;
+            isOptionsDialogShown = true;
+            var o = new Options();
+
+            foreach (var m in windows)
+            {
+                m.Topmost = false;
+            }
+
+            o.Topmost = true;
+            await o.ShowDialog(windows[0]);
+
+            foreach (var m in windows)
+            {
+                m.Topmost = true;
+                //m.ResetCanvas();
+            }
+
+            isOptionsDialogShown = false;
+        }
         //
         // public void MouseDown(MainWindow main, MouseButtonEventArgs e)
         // {
@@ -517,17 +449,17 @@ namespace BabySmash
         //     Win32Audio.PlayWavResource("smallbumblebee.wav");
         // }
         //
-        // public void MouseWheel(MainWindow main, MouseWheelEventArgs e)
-        // {
-        //     if (e.Delta > 0)
-        //     {
-        //         Win32Audio.PlayWavResourceYield("rising.wav");
-        //     }
-        //     else
-        //     {
-        //         Win32Audio.PlayWavResourceYield("falling.wav");
-        //     }
-        // }
+        public void MouseWheel(MainWindow main, PointerWheelEventArgs e)
+        {
+            if (e.Delta.Y > 0)
+            {
+                Win32Audio.PlayWavResourceYield("rising.wav");
+            }
+            else
+            {
+                Win32Audio.PlayWavResourceYield("falling.wav");
+            }
+        }
         //
         // public void MouseUp(MainWindow main, MouseButtonEventArgs e)
         // {
