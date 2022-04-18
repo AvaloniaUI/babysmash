@@ -1,16 +1,29 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Avalonia;
-using Avalonia.Forms;
-using Application = Avalonia.Application;
-using WinForms = Avalonia.Forms;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
 
 namespace BabySmash
 {
     public partial class App : Application
     {
-        private static readonly InterceptKeys.LowLevelKeyboardProc _proc = HookCallback;
+        public override void Initialize()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+
+        public override void OnFrameworkInitializationCompleted()
+        {
+            Controller.Instance.Launch();
+
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                desktop.MainWindow = new MainWindow(Controller.Instance);
+            
+            base.OnFrameworkInitializationCompleted();
+        }
+        
+        /*
+         // TODO: Make this cross-platform perhaps?
+         private static readonly InterceptKeys.LowLevelKeyboardProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -106,6 +119,6 @@ namespace BabySmash
 
             // Allow anything else (like letters, numbers, spacebar, braces, and so on).
             return true;
-        }
+        }*/
     }
 }
