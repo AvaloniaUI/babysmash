@@ -31,12 +31,18 @@ namespace BabySmash
 
         public static void PlayWavResource(string wav)
         {
+            //TODO: Implement audio playback on all 3 desktop platforms:
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+
             byte[] arrWav = GetWavResource(wav);
             PlaySound(arrWav, IntPtr.Zero, SND_ASYNC | SND_MEMORY);
         }
 
         public static void PlayWavResourceYield(string wav)
         {
+            //TODO: Implement audio playback on all 3 desktop platforms:
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+
             byte[] arrWav = GetWavResource(wav);
             PlaySound(arrWav, IntPtr.Zero, SND_ASYNC | SND_NOSTOP | SND_MEMORY);
         }
