@@ -36,7 +36,7 @@ namespace BabySmash
             return new DropShadowEffect();
         }
 
-        public static void ApplyRandomAnimationEffect(FrameworkElement fe, Duration duration)
+        public static void ApplyRandomAnimationEffect(Control fe, Duration duration)
         {
             int e = Utils.RandomBetweenTwoNumbers(0, 3);
             switch (e)
@@ -56,7 +56,7 @@ namespace BabySmash
             }
         }
 
-        public static Storyboard CreateDPAnimation(FrameworkElement container, UIElement shape,
+        public static Storyboard CreateDPAnimation(Control container, UIElement shape,
                                                    AvaloniaProperty dp, Duration duration, double from, double to)
         {
             var st = new Storyboard();
@@ -77,7 +77,7 @@ namespace BabySmash
             return st;
         }
 
-        public static void ApplyJiggle(FrameworkElement fe, Duration duration)
+        public static void ApplyJiggle(Control fe, Duration duration)
         {
             DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
             da.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.Paced));
@@ -98,7 +98,7 @@ namespace BabySmash
             fe.RenderTransform.BeginAnimation(RotateTransform.AngleProperty, da);
         }
 
-        public static void ApplyThrob(FrameworkElement fe, Duration duration)
+        public static void ApplyThrob(Control fe, Duration duration)
         {
             DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
             da.KeyFrames.Add(new LinearDoubleKeyFrame(1, KeyTime.Paced));
@@ -120,7 +120,7 @@ namespace BabySmash
             fe.RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, da);
         }
 
-        public static Timeline ApplyZoom(FrameworkElement fe, Duration duration, double scale)
+        public static Timeline ApplyZoom(Control fe, Duration duration, double scale)
         {
             var da = new DoubleAnimation
             {
@@ -139,7 +139,7 @@ namespace BabySmash
             return da;
         }
 
-        public static void ApplyRotate(FrameworkElement fe, Duration duration)
+        public static void ApplyRotate(Control fe, Duration duration)
         {
             DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
             da.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.Paced));
@@ -160,7 +160,7 @@ namespace BabySmash
             fe.RenderTransform.BeginAnimation(RotateTransform.AngleProperty, da);
         }
 
-        public static void ApplySnap(FrameworkElement fe, Duration duration)
+        public static void ApplySnap(Control fe, Duration duration)
         {
             DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
             da.KeyFrames.Add(new LinearDoubleKeyFrame(1, KeyTime.Paced));
