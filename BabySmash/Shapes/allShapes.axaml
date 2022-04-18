@@ -1,22 +1,15 @@
-﻿<Page
+﻿<UserControl
   xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
-	<Grid x:Name="LayoutRoot">
-		<Grid.RowDefinitions>
-			<RowDefinition/>
-			<RowDefinition/>
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
-		</Grid.ColumnDefinitions>
-
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d">
+	<Grid x:Name="LayoutRoot" RowDefinitions="*,*" ColumnDefinitions="*,*,*">
 		<!-- BOF Parellelogram -->
 		<Canvas x:Name="Parellelogram" Grid.Row="1" HorizontalAlignment="Left" Height="20" Margin="-42,0,0,-95" VerticalAlignment="Bottom" Width="20">
-			<Path StrokeThickness="10" Stroke="#ff000000" StrokeMiterLimit="1" Data="F1 M 302.564941,159.833984 L 6.651855,159.833984 L 51.451172,5 L 257.766113,5 L 302.564941,159.833984 Z">
+			<Path StrokeThickness="10" Stroke="#ff000000" Data="F1 M 302.564941,159.833984 L 6.651855,159.833984 L 51.451172,5 L 257.766113,5 L 302.564941,159.833984 Z">
 				<Path.Fill>
-					<RadialGradientBrush MappingMode="Absolute" GradientOrigin="410.416016,182.5" Center="410.416016,182.5" RadiusX="118.077667" RadiusY="118.077667">
+					<RadialGradientBrush GradientOrigin="410.416016,182.5" Center="410.416016,182.5" Radius="118.077667">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-255.808105,264.916992" />
 						</RadialGradientBrush.Transform>
@@ -35,9 +28,9 @@
 
 		<!-- BOF Hexagon -->
 		<Canvas x:Name="Hexagon" Height="10" HorizontalAlignment="Left" Width="6.666" Margin="-252.333,-139,0,0" VerticalAlignment="Top" Background="{x:Null}">
-			<Path StrokeThickness="10" Stroke="#ff000000" StrokeMiterLimit="1" Data="F1 M 61.853516,199.267578 L 5.773438,102.133789 L 61.853516,5 L 174.013672,5 L 230.093750,102.133789 L 174.013672,199.267578 L 61.853516,199.267578 Z">
+			<Path StrokeThickness="10" Stroke="#ff000000" Data="F1 M 61.853516,199.267578 L 5.773438,102.133789 L 61.853516,5 L 174.013672,5 L 230.093750,102.133789 L 174.013672,199.267578 L 61.853516,199.267578 Z">
 				<Path.Fill>
-					<RadialGradientBrush MappingMode="Absolute" GradientOrigin="664.333008,431.5" Center="664.333008,431.5" RadiusX="104.916328" RadiusY="104.916328">
+					<RadialGradientBrush GradientOrigin="664.333008,431.5" Center="664.333008,431.5" Radius="104.916328">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-546.399414,533.633789" />
 						</RadialGradientBrush.Transform>
@@ -59,7 +52,7 @@
 		<Canvas Grid.Column="2" x:Name="Square" Width="6.667" Height="10" HorizontalAlignment="Right" Margin="0,-226,-156,0" VerticalAlignment="Top">
 			<Rectangle StrokeThickness="10" Stroke="#ff000000" Width="207" Height="207">
 				<Rectangle.Fill>
-					<RadialGradientBrush MappingMode="Absolute" GradientOrigin="110.185547,455" Center="110.185547,455" RadiusX="98.5" RadiusY="98.5">
+					<RadialGradientBrush GradientOrigin="110.185547,455" Center="110.185547,455" Radius="98.5">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-6.685547,558.5" />
 						</RadialGradientBrush.Transform>
@@ -77,9 +70,9 @@
 
 		<!-- BOF Star -->
 		<Canvas Grid.Row="1" x:Name="Star" Width="6.667" Height="10" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,-338.667,-36" VerticalAlignment="Bottom">
-			<Path StrokeThickness="10" Stroke="#ff000000" StrokeMiterLimit="1" Data="F1 M 126.578613,11.297852 L 162.373535,83.825684 L 242.412598,95.456055 L 184.495605,151.911133 L 198.167480,231.626953 L 126.578613,193.990234 L 54.988770,231.626953 L 68.661621,151.911133 L 10.744629,95.456055 L 90.783691,83.825684 L 126.578613,11.297852 Z">
+			<Path StrokeThickness="10" Stroke="#ff000000" Data="F1 M 126.578613,11.297852 L 162.373535,83.825684 L 242.412598,95.456055 L 184.495605,151.911133 L 198.167480,231.626953 L 126.578613,193.990234 L 54.988770,231.626953 L 68.661621,151.911133 L 10.744629,95.456055 L 90.783691,83.825684 L 126.578613,11.297852 Z">
 				<Path.Fill>
-					<RadialGradientBrush MappingMode="Absolute" GradientOrigin="390.395508,448.130371" Center="390.395508,448.130371" RadiusX="113.034821" RadiusY="113.034821">
+					<RadialGradientBrush GradientOrigin="390.395508,448.130371" Center="390.395508,448.130371" Radius="113.034821">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-263.816895,569.592773" />
 						</RadialGradientBrush.Transform>
@@ -100,7 +93,7 @@
 		<Canvas Grid.Row="1" x:Name="Circle" Height="10" HorizontalAlignment="Left" Width="6.666" Margin="-310.333,0,0,-36" VerticalAlignment="Bottom">
 			<Ellipse StrokeThickness="10" Stroke="#ff000000"  Width="212.176" Height="212.176">
 				<Ellipse.Fill>
-					<RadialGradientBrush MappingMode="Absolute" GradientOrigin="123,198" Center="123,198" RadiusX="102" RadiusY="102">
+					<RadialGradientBrush GradientOrigin="123,198" Center="123,198" Radius="102">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-16,305" />
 						</RadialGradientBrush.Transform>
@@ -110,14 +103,14 @@
 				</Ellipse.Fill>
 			</Ellipse>
 			<Path Fill="#ff000000" Data="F1 M 124.545898,151.451172 C 124.529297,161.141602 116.688477,168.981445 107.000977,168.998047 L 107.000977,168.998047 C 97.310547,168.981445 89.469727,161.141602 89.453125,151.451172 L 89.453125,151.451172 C 89.453125,148.690430 87.213867,146.451172 84.453125,146.451172 L 84.453125,146.451172 C 81.692383,146.451172 79.453125,148.690430 79.453125,151.451172 L 79.453125,151.451172 C 79.457031,166.666992 91.785156,178.995117 107.000977,178.999023 L 107.000977,178.999023 C 122.214844,178.995117 134.543945,166.666992 134.546875,151.451172 L 134.546875,151.451172 C 134.546875,148.690430 132.308594,146.451172 129.545898,146.451172 L 129.545898,146.451172 C 126.785156,146.451172 124.545898,148.690430 124.545898,151.451172 L 124.545898,151.451172 Z"/>
-			<Path StrokeThickness="10" Stroke="#ff000000" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeMiterLimit="1" Data="F1 M 58.970703,66.372070 C 64.513184,62.001953 71.509277,59.393555 79.114258,59.393555 C 86.719727,59.393555 93.715820,62.001953 99.258301,66.372070"/>
-			<Path StrokeThickness="10" Stroke="#ff000000" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeMiterLimit="1" Data="F1 M 114.742188,66.372070 C 120.284180,62.001953 127.280273,59.393555 134.885742,59.393555 C 142.491211,59.393555 149.487305,62.001953 155.029297,66.372070"/>
+			<Path StrokeThickness="10" Stroke="#ff000000" StrokeLineCap="Round" Data="F1 M 58.970703,66.372070 C 64.513184,62.001953 71.509277,59.393555 79.114258,59.393555 C 86.719727,59.393555 93.715820,62.001953 99.258301,66.372070"/>
+			<Path StrokeThickness="10" Stroke="#ff000000" StrokeLineCap="Round" Data="F1 M 114.742188,66.372070 C 120.284180,62.001953 127.280273,59.393555 134.885742,59.393555 C 142.491211,59.393555 149.487305,62.001953 155.029297,66.372070"/>
 		</Canvas>
 
 		<Canvas x:Name="Triangle" Height="10" HorizontalAlignment="Left" Width="6.666" VerticalAlignment="Top">
-			<Path Stretch="Fill" Stroke="#ff000000" StrokeMiterLimit="1" StrokeThickness="10" HorizontalAlignment="Left" Width="247.666" Data="M-182.61185,-253.00014 L-301.61203,-82.000235 C-301.61203,-82.000235 -67,-81 -64,-82 -61,-83 -182.61185,-253.00014 -182.61185,-253.00014 z" Grid.RowSpan="2" Canvas.Left="-17" Canvas.Top="8">
+			<Path Stretch="Fill" Stroke="#ff000000" StrokeThickness="10" HorizontalAlignment="Left" Width="247.666" Data="M-182.61185,-253.00014 L-301.61203,-82.000235 C-301.61203,-82.000235 -67,-81 -64,-82 -61,-83 -182.61185,-253.00014 -182.61185,-253.00014 z" Grid.RowSpan="2" Canvas.Left="-17" Canvas.Top="8">
 				<Path.Fill>
-					<RadialGradientBrush MappingMode="Absolute" GradientOrigin="664.333008,431.5" Center="664.333008,431.5" RadiusX="104.916328" RadiusY="104.916328">
+					<RadialGradientBrush GradientOrigin="664.333008,431.5" Center="664.333008,431.5" Radius="104.916328">
 						<RadialGradientBrush.Transform>
 							<MatrixTransform Matrix="1,0,-0,-1,-546.399414,533.633789" />
 						</RadialGradientBrush.Transform>
@@ -131,7 +124,7 @@
 			<Path Fill="#ff000000" Data="F1 M 122.779297,145.530762 C 122.779297,156.178223 114.147461,164.810059 103.5,164.810059 C 92.852539,164.810059 84.220703,156.178223 84.220703,145.530762 C 84.220703,134.883301 92.852539,145.530762 103.5,145.530762 C 114.147461,145.530762 122.779297,134.883301 122.779297,145.530762 Z" Canvas.Left="6" Canvas.Top="-1"/>
 		</Canvas>
 		<Canvas x:Name="Heart" Height="10" HorizontalAlignment="Left" Width="6.666" Margin="-404.333,0,0,-234.134" VerticalAlignment="Bottom" Grid.Row="1">
-			<Path Stroke="#ff000000" StrokeMiterLimit="1" StrokeThickness="15"  Stretch="Fill" Data="F1 M 229,161.333C 306.333,88.6667 409,142.122 409,225.333C 409,308.544 229,462.667 229,462.667C 229,462.667 057,306.544 057,223.333C 057,140.123 156.138,88.4713 229,161.333 Z" Canvas.Top="-38" RenderTransformOrigin="0.5,0.5" Canvas.Left="-37">
+			<Path Stroke="#ff000000" StrokeThickness="15"  Stretch="Fill" Data="F1 M 229,161.333C 306.333,88.6667 409,142.122 409,225.333C 409,308.544 229,462.667 229,462.667C 229,462.667 057,306.544 057,223.333C 057,140.123 156.138,88.4713 229,161.333 Z" Canvas.Top="-38" RenderTransformOrigin="0.5,0.5" Canvas.Left="-37">
 				<Path.Fill>
                     <RadialGradientBrush>
                         <GradientStop Color="#FFFF0000" Offset="0"/>
@@ -163,4 +156,4 @@
 		<!-- EOF Circle -->
 
 	</Grid>
-</Page>
+</UserControl>
