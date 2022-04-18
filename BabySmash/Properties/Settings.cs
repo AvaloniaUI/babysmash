@@ -1,13 +1,29 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 
 namespace BabySmash.Properties
 {
     public sealed class Settings
     {
+        static Settings()
+        {
+            Default = new Settings();
+            var configRoot = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var configFolderName = Assembly.GetExecutingAssembly().GetName().Name;
+            var configFolder = Path.Combine(configRoot, configFolderName);
+
+            if (!File.Exists(ApplicationSettingsPath))
+            {
+                if (!Directory.Exists(configFolder))
+                    Directory.CreateDirectory(configFolder);
+                Default.Save();
+            }
+
+            Default.Reload();
+        }
+
         public bool ForceUppercase { get; set; } = true;
 
         public bool FadeAway { get; set; } = true;
@@ -29,16 +45,6 @@ namespace BabySmash.Properties
         public string FontFamily { get; set; } = "Arial";
 
         public bool TransparentBackground { get; set; }
-
-        private Settings()
-        {
-            if (!File.Exists(ApplicationSettingsPath))
-            {
-                Save();
-            }
-
-            Reload();
-        }
 
         private static string ApplicationSettingsPath { get; } = GetSettingsPath();
 
