@@ -31,10 +31,6 @@
             </Transitions>
         </Setter>
     </Style>
-
-    <Style Selector=":is(Control).fadeAfter">
-        <Setter Property="Opacity" Value="0" />
-    </Style>
     
     <Style Selector=":is(Control).jiggle">
         <Style.Animations>

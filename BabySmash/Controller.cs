@@ -205,31 +205,7 @@ namespace BabySmash
 
                 if (Settings.Default.FadeAway)
                 {
-                    var fadeOut = new Avalonia.Animation.Animation
-                    {
-                        Delay = TimeSpan.FromSeconds(Settings.Default.FadeAfter),
-                        Duration = TimeSpan.FromSeconds(2),
-                        Children =
-                        {
-                            new KeyFrame
-                            {
-                                Cue = new Cue(0),
-                                Setters =
-                                {
-                                    new Setter(Visual.OpacityProperty, 1d)
-                                }
-                            },
-                            new KeyFrame
-                            {
-                                Cue = new Cue(1),
-                                Setters =
-                                {
-                                    new Setter(Visual.OpacityProperty, 0d)
-                                }
-                            }
-                        }
-                    };
-                    fadeOut.RunAsync(figure, null);
+                    AnimationHelpers.FadeOutFigure(figure);
                 }
 
                 if (figure is IHasFace face)

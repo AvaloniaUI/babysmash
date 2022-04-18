@@ -1,8 +1,10 @@
 ﻿using System;
+using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
+using BabySmash.Properties;
 
 namespace BabySmash
 {
@@ -59,6 +61,38 @@ namespace BabySmash
 
         }
 
+        public static void FadeOutFigure(Control fe)
+        {
+            var da = new Animation
+            {
+                Delay = TimeSpan.FromSeconds(Settings.Default.FadeAfter),
+                Duration = TimeSpan.FromSeconds(2),
+                FillMode = FillMode.Both,
+                Children =
+                { 
+                    new KeyFrame
+                    {
+                        Cue = new Cue(0),
+                        Setters =
+                        {
+                            new Setter(Visual.OpacityProperty, 1d)
+                        }
+                    },
+                    new KeyFrame
+                    {
+                        Cue = new Cue(1),
+                        Setters =
+                        {
+                            new Setter(Visual.OpacityProperty, 0d)
+                        }
+                    }
+                }
+            };
+
+            da.RunAsync(fe, null);
+        }
+
+        
         public static void ApplyRotate(Control fe)
         {
             fe.Classes.Remove("rotate");
