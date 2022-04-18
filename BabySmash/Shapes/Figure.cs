@@ -4,6 +4,6 @@ namespace BabySmash
 {
     public interface IHasFace
     {
-        Visibility FaceVisible { get; set; }
+        bool IsFaceVisible { get; set; }
     }
 }
