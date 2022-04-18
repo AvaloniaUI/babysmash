@@ -2,7 +2,9 @@
 using System.Deployment.Application;
 using System.Diagnostics;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using BabySmash.Properties;
 
 namespace BabySmash
