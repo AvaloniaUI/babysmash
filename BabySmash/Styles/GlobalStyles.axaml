@@ -1,0 +1,27 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <Style Selector=":is(Control).BlinkingEye">
+        <Style.Animations>
+            <Animation Duration="0:0:7.3" IterationCount="Infinite">
+                <KeyFrame KeyTime="00:00:02.1">
+                    <Setter Property="Opacity" Value="1"/>
+                </KeyFrame>
+                <KeyFrame KeyTime="00:00:02.1">
+                    <Setter Property="Opacity" Value="0"/>
+                </KeyFrame>
+                <KeyFrame KeyTime="00:00:02.3">
+                    <Setter Property="Opacity" Value="0"/>
+                </KeyFrame>
+                <KeyFrame KeyTime="00:00:02.3">
+                    <Setter Property="Opacity" Value="1"/>
+                </KeyFrame>
+                <KeyFrame KeyTime="00:00:7.3">
+                    <Setter Property="Opacity" Value="1"/>
+                </KeyFrame>
+            </Animation>
+        </Style.Animations>
+    </Style>
+
+    <!-- Add Styles Here -->
+</Styles>

@@ -4,6 +4,6 @@
     xmlns:BabySmash="clr-namespace:BabySmash" Startup="Application_Startup"    
     >
     <Application.Resources>
-       
+       <StyleInclude Source="Styles/GlobalStyles.axaml"/>
     </Application.Resources>
 </Application>
