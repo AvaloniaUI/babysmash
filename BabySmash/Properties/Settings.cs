@@ -1,11 +1,14 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace BabySmash.Properties
 {
-    public sealed class Settings
+    public sealed class Settings : INotifyPropertyChanged
     {
         static Settings()
         {
@@ -44,7 +47,19 @@ namespace BabySmash.Properties
 
         public string FontFamily { get; set; } = "Arial";
 
-        public bool TransparentBackground { get; set; }
+
+        private bool _transparentBackground;
+
+        public bool TransparentBackground
+        {
+            get => _transparentBackground;
+            set
+            {
+                if (_transparentBackground == value) return;
+                _transparentBackground = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransparentBackground)));
+            }
+        }
 
         private static string ApplicationSettingsPath { get; } = GetSettingsPath();
 
@@ -66,6 +81,14 @@ namespace BabySmash.Properties
         public void Reload()
         {
             Default = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ApplicationSettingsPath));
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
