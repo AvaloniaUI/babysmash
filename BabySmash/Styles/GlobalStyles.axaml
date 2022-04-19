@@ -24,12 +24,7 @@
     </Style>
 
     <Style Selector=":is(Control).shapes">
-        <Setter Property="RenderTransformOrigin" Value="50%,50%"/>
-        <Setter Property="Transitions">
-            <Transitions>
-                <DoubleTransition Property="Opacity" Duration="0:0:1" />
-            </Transitions>
-        </Setter>
+        <Setter Property="RenderTransformOrigin" Value="50%,50%"/> 
     </Style>
     
     <Style Selector=":is(Control).jiggle">
@@ -142,8 +137,7 @@
             </Animation>
         </Style.Animations>
     </Style>
-    <!-- -->
-    <!-- -->
+    
     <Style Selector=":is(Control).snap">
         <Style.Animations>
             <Animation Duration="0:0:1">
@@ -159,12 +153,4 @@
             </Animation>
         </Style.Animations>
     </Style>
-    <!--   -->
-    <!-- -->
-    
-    <!-- -->
-    <!-- <Style Selector="Border.Rect3:pointerover"> -->
-    <!--     <Setter Property="RenderTransform" Value="1turn" /> -->
-    <!-- </Style> -->
-
 </Styles>
