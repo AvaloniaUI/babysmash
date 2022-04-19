@@ -65,8 +65,7 @@ namespace BabySmash
         {
             var da = new Animation
             {
-                Delay = TimeSpan.FromSeconds(Settings.Default.FadeAfter),
-                Duration = TimeSpan.FromSeconds(2),
+                Duration = TimeSpan.FromSeconds(Settings.Default.FadeAfter),
                 FillMode = FillMode.Both,
                 Children =
                 { 
@@ -84,6 +83,30 @@ namespace BabySmash
                         Setters =
                         {
                             new Setter(Visual.OpacityProperty, 0d)
+                        }
+                    }
+                }
+            };
+
+            da.RunAsync(fe, null);
+        }
+
+        
+        public static void TranslateFigure(Control fe, double toX, double toY)
+        {
+            var da = new Animation
+            {
+                Duration = TimeSpan.FromSeconds(1),
+                FillMode = FillMode.Both,
+                Children =
+                { 
+                    new KeyFrame
+                    {
+                        Cue = new Cue(1),
+                        Setters =
+                        {
+                            new Setter(TranslateTransform.XProperty, toX),
+                            new Setter(TranslateTransform.YProperty, toY),
                         }
                     }
                 }

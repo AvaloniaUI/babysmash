@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
+using System.Threading;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
@@ -23,91 +26,31 @@ namespace BabySmash
 {
     public class Controller
     {
-        public bool isOptionsDialogShown { get; set; }
         private bool isDrawing;
 
         // TODO: Disabled Speech features since it's not cross platform compatible as well.
         // private readonly SpeechSynthesizer objSpeech = new SpeechSynthesizer();
-        private readonly List<MainWindow> windows = new List<MainWindow>();
 
-        private DispatcherTimer timer = new DispatcherTimer();
+        private readonly List<MainWindow> windows = new();
+
         private Queue<Shape> ellipsesQueue = new Queue<Shape>();
+        private DispatcherTimer timer;
 
-        private Dictionary<string, List<UserControl>> figuresUserControlQueue =
-            new Dictionary<string, List<UserControl>>();
+        private Dictionary<string, List<UserControl>> figuresUserControlQueue = new();
 
-        // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
-        // private ApplicationDeployment deployment = null;
-        private WordFinder wordFinder = new WordFinder("Words.txt");
+        private WordFinder wordFinder = new("Words.txt");
+        private bool canShowDialog;
 
         /// <summary>Prevents a default instance of the Controller class from being created.</summary>
         private Controller()
         {
         }
 
-        public static Controller Instance { get; } = new Controller();
-
-        // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
-        /*
-        void deployment_CheckForUpdateCompleted(object sender, CheckForUpdateCompletedEventArgs e)
-        {
-            if (e.Error == null && e.UpdateAvailable)
-            {
-                try
-                {
-                    MainWindow w = this.windows[0];
-                    w.updateProgress.Value = 0;
-                    w.UpdateAvailableLabel.Visibility = Visibility.Visible;
-
-                    deployment.UpdateAsync();
-                }
-                catch (InvalidOperationException ex)
-                {
-                    Debug.WriteLine(ex.ToString());
-                    MainWindow w = this.windows[0];
-                    w.UpdateAvailableLabel.Visibility = Visibility.Hidden;
-                }
-            }
-        }
-
-        void deployment_UpdateProgressChanged(object sender, DeploymentProgressChangedEventArgs e)
-        {
-            MainWindow w = this.windows[0];
-            w.updateProgress.Value = e.ProgressPercentage;
-        }
-
-        void deployment_UpdateCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            if (e.Error != null)
-            {
-                Debug.WriteLine(e.ToString());
-                return;
-            }
-            MainWindow w = this.windows[0];
-            w.UpdateAvailableLabel.Visibility = Visibility.Hidden;
-        }*/
+        public static Controller Instance { get; } = new();
 
         public void Launch(IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var Number = 0;
-
-            // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
-            /*
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                deployment = ApplicationDeployment.CurrentDeployment;
-                deployment.UpdateCompleted += new System.ComponentModel.AsyncCompletedEventHandler(deployment_UpdateCompleted);
-                deployment.UpdateProgressChanged += deployment_UpdateProgressChanged;
-                deployment.CheckForUpdateCompleted += deployment_CheckForUpdateCompleted;
-                try
-                {
-                    deployment.CheckForUpdateAsync();
-                }
-                catch (InvalidOperationException e)
-                {
-                    Debug.WriteLine(e.ToString());
-                }
-            }*/
+            var number = 0;
 
             var dummyWindow = new Window();
 
@@ -121,15 +64,23 @@ namespace BabySmash
                     Height = s.WorkingArea.Height,
                     WindowState = WindowState.FullScreen,
                     SystemDecorations = SystemDecorations.None,
+                    TransparencyLevelHint = WindowTransparencyLevel.Transparent,
                     Topmost = true,
                     Background = (Settings.Default.TransparentBackground
                         ? Brushes.Transparent
                         : Brushes.WhiteSmoke),
-                    // Name = "Window" + Number++,
                     Controller = this,
                     DataContext = this
                 };
-                var windowName = $"Window{Number++}";
+                
+                Settings.Default.PropertyChanged += delegate
+                {
+                    m.Background = (Settings.Default.TransparentBackground
+                        ? Brushes.Transparent
+                        : Brushes.WhiteSmoke);
+                };
+
+                var windowName = $"Window{number++}";
                 m.Classes.Add(windowName);
 
                 figuresUserControlQueue[windowName] = new List<UserControl>();
@@ -155,23 +106,28 @@ namespace BabySmash
             //Startup sound
             Win32Audio.PlayWavResourceYield("EditedJackPlaysBabySmash.wav");
 
-            string[] args = Environment.GetCommandLineArgs();
+            var args = Environment.GetCommandLineArgs();
             var ext = Path.GetExtension(Assembly.GetExecutingAssembly().CodeBase);
 
-            // TODO: Disabled ApplicationDeployment since ClickOnce doesnt work in dotnet core.
-            /*if (ApplicationDeployment.IsNetworkDeployed && (ApplicationDeployment.CurrentDeployment.IsFirstRun || ApplicationDeployment.CurrentDeployment.UpdatedVersion != ApplicationDeployment.CurrentDeployment.CurrentVersion))
+            //if someone made us a screensaver, then don't show the options dialog.
+            if (args.Length != 0 && args[0] != "/s" && string.CompareOrdinal(ext, ".SCR") != 0)
             {
-                //if someone made us a screensaver, then don't show the options dialog.
-                if ((args != null && args[0] != "/s") && String.CompareOrdinal(ext, ".SCR") != 0)
+                canShowDialog = true;
+            }
+
+            timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background,
+                delegate
                 {
-                    ShowOptionsDialog();
-                }
-            }*/
+                    windows[0].Activate();
+                    windows[0].Focus();
+                });
+
+            timer.Start();
         }
 
         public void ProcessChar(Control uie, char inChar)
         {
-            AddFigure(uie, inChar);
+            AddFigure(uie, char.ToUpperInvariant(inChar));
         }
 
         private void AddFigure(Control uie, char c)
@@ -189,7 +145,7 @@ namespace BabySmash
                 var queue = figuresUserControlQueue[window.Classes.First()];
                 queue.Add(figure);
 
-                // Letters should already have accurate width and height, but others may them assigned.
+                //Letters should already have accurate width and height, but others may them assigned.
                 if (double.IsNaN(figure.Width) || double.IsNaN(figure.Height))
                 {
                     figure.Width = 300;
@@ -241,7 +197,7 @@ namespace BabySmash
             if (sender is not UserControl foo || !foo.Classes.Contains("shape")) return;
             if (e.Delta.Y < 0)
             {
-                 AnimationHelpers.ApplyZoom(foo, TimeSpan.FromSeconds(0.5), 2.5);
+                AnimationHelpers.ApplyZoom(foo, TimeSpan.FromSeconds(0.5), 2.5);
             }
         }
 
@@ -391,12 +347,13 @@ namespace BabySmash
 
         public async void ShowOptionsDialog()
         {
-            var foo = Settings.Default.TransparentBackground;
-            isOptionsDialogShown = true;
+            if (!canShowDialog) return;
+
             var o = new Options();
 
             foreach (var m in windows)
             {
+                m.Cursor = new Cursor(StandardCursorType.Arrow);
                 m.Topmost = false;
             }
 
@@ -408,23 +365,21 @@ namespace BabySmash
                 m.Topmost = true;
                 //m.ResetCanvas();
             }
-
-            isOptionsDialogShown = false;
         }
-        //
-        // public void MouseDown(MainWindow main, MouseButtonEventArgs e)
-        // {
-        //     if (isDrawing || Settings.Default.MouseDraw) return;
-        //
-        //     // Create a new Ellipse object and add it to canvas.
-        //     Point ptCenter = e.GetPosition(main.mouseCursorCanvas);
-        //     MouseDraw(main, ptCenter);
-        //     isDrawing = true;
-        //     main.CaptureMouse();
-        //
-        //     Win32Audio.PlayWavResource("smallbumblebee.wav");
-        // }
-        //
+
+
+        public void PointerPressed(MainWindow main, PointerPressedEventArgs e)
+        {
+            if (isDrawing || Settings.Default.MouseDraw) return;
+
+            // Create a new Ellipse object and add it to canvas.
+            var ptCenter = e.GetPosition(main.mouseCursorCanvas);
+            MouseDraw(main, ptCenter);
+            isDrawing = true;
+
+            Win32Audio.PlayWavResource("smallbumblebee.wav");
+        }
+
         public void MouseWheel(MainWindow main, PointerWheelEventArgs e)
         {
             if (e.Delta.Y > 0)
@@ -436,62 +391,44 @@ namespace BabySmash
                 Win32Audio.PlayWavResourceYield("falling.wav");
             }
         }
-        //
-        // public void MouseUp(MainWindow main, MouseButtonEventArgs e)
-        // {
-        //     isDrawing = false;
-        //     if (Settings.Default.MouseDraw) return;
-        //     main.ReleaseMouseCapture();
-        // }
-        //
-        // public void MouseMove(MainWindow main, MouseEventArgs e)
-        // {
-        //     if (isOptionsDialogShown)
-        //     {
-        //         main.ReleaseMouseCapture();
-        //         return;
-        //     }
-        //
-        //     if (Settings.Default.MouseDraw && main.IsMouseCaptured == false)
-        //         main.CaptureMouse();
-        //
-        //     if (isDrawing || Settings.Default.MouseDraw)
-        //     {
-        //         MouseDraw(main, e.GetPosition(main));
-        //     }
-        //
-        //     // Cheesy, but hotkeys are ignored when the mouse is captured.
-        //     // However, if we don't capture and release, the shapes will draw forever.
-        //     if (Settings.Default.MouseDraw && main.IsMouseCaptured)
-        //         main.ReleaseMouseCapture();
-        // }
-        //
-        // private void MouseDraw(MainWindow main, Point p)
-        // {
-        //     //randomize at some point?
-        //     Shape shape = new Ellipse
-        //     {
-        //         Stroke = Theme,
-        //         StrokeThickness = 0,
-        //         Fill = Utils.GetGradientBrush(Utils.GetRandomColor()),
-        //         Width = 50,
-        //         Height = 50
-        //     };
-        //
-        //     ellipsesQueue.Enqueue(shape);
-        //     main.mouseDragCanvas.Children.Add(shape);
-        //     Canvas.SetLeft(shape, p.X - 25);
-        //     Canvas.SetTop(shape, p.Y - 25);
-        //
-        //     if (Settings.Default.MouseDraw)
-        //         Win32Audio.PlayWavResourceYield("smallbumblebee.wav");
-        //
-        //     if (ellipsesQueue.Count > 30) //this is arbitrary
-        //     {
-        //         Shape shapeToRemove = ellipsesQueue.Dequeue();
-        //         main.mouseDragCanvas.Children.Remove(shapeToRemove);
-        //     }
-        // }
+
+        public void PointerReleased(PointerReleasedEventArgs e)
+        {
+            isDrawing = false;
+        }
+
+        public void PointerMove(MainWindow main, PointerEventArgs e)
+        {
+            if (isDrawing || Settings.Default.MouseDraw)
+            {
+                MouseDraw(main, e.GetPosition(main));
+            }
+        }
+
+        private void MouseDraw(MainWindow main, Point p)
+        {
+            //randomize at some point?
+            Shape shape = new Ellipse
+            {
+                Fill = Utils.GetGradientBrush(Utils.GetRandomColor()),
+                Width = 50,
+                Height = 50
+            };
+
+            ellipsesQueue.Enqueue(shape);
+            main.mouseDragCanvas.Children.Add(shape);
+            Canvas.SetLeft(shape, p.X - 25);
+            Canvas.SetTop(shape, p.Y - 25);
+
+            if (Settings.Default.MouseDraw)
+                Win32Audio.PlayWavResourceYield("smallbumblebee.wav");
+
+            if (ellipsesQueue.Count > 30) //this is arbitrary
+            {
+                Shape shapeToRemove = ellipsesQueue.Dequeue();
+                main.mouseDragCanvas.Children.Remove(shapeToRemove);
+            }
+        }
         //
         // //private static void ResetCanvas(MainWindow main)
         // //{

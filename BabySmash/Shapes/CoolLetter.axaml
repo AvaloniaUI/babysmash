@@ -10,7 +10,7 @@
 
 	<Grid x:Name="LayoutRoot">
 		<Canvas x:Name="Letter" >
-			<TextBlock x:Name="letterPath" FontSize="300">
+			<TextBlock x:Name="letterPath" FontSize="300" FontWeight="Bold">
 				<TextBlock.Foreground>
 					<RadialGradientBrush GradientOrigin="123,198" Center="123,198" Radius="102">
 						<RadialGradientBrush.Transform>

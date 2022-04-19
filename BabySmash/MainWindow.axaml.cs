@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 
 namespace BabySmash
 {
@@ -51,10 +52,10 @@ namespace BabySmash
 
         /// <inheritdoc />
         protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
-        { 
+        {
             Controller.MouseWheel(this, e);
         }
-        
+
         //
         // protected override void OnMouseUp(MouseButtonEventArgs e)
         // {
@@ -62,69 +63,66 @@ namespace BabySmash
         //     controller.MouseUp(this, e);
         // }
         //
-        // protected override void OnMouseDown(MouseButtonEventArgs e)
-        // {
-        //     base.OnMouseDown(e);
-        //     controller.MouseDown(this, e);
-        // }
-        //
-        // protected override void OnMouseEnter(MouseEventArgs e)
-        // {
-        //     base.OnMouseEnter(e);
-        //     AssertCursor();
-        //     CustomCursor.Visibility = Visibility.Visible;
-        // }
-        //
-        // protected override void OnMouseLeave(MouseEventArgs e)
-        // {
-        //     base.OnMouseLeave(e);
-        //     CustomCursor.Visibility = Visibility.Hidden;
-        // }
-        //
-        // protected override void OnMouseMove(MouseEventArgs e)
-        // {
-        //     base.OnMouseMove(e);
-        //     if (controller.isOptionsDialogShown == false)
-        //     {
-        //         CustomCursor.Visibility = Visibility.Visible;
-        //         Point p = e.GetPosition(mouseDragCanvas);
-        //         double pX = p.X;
-        //         double pY = p.Y;
-        //         Cursor = Cursors.None;
-        //         Canvas.SetTop(CustomCursor, pY);
-        //         Canvas.SetLeft(CustomCursor, pX);
-        //         Canvas.SetZIndex(CustomCursor, int.MaxValue);
-        //     }
-        //     controller.MouseMove(this, e);
-        // }
 
-        //
-        // protected override void OnLostMouseCapture(MouseEventArgs e)
-        // {
-        //     base.OnLostMouseCapture(e);
-        //     controller.LostMouseCapture(this, e);
-        // }
-        //
-        // internal void AssertCursor()
-        // {
-        //     try
-        //     {
-        //         mouseCursorCanvas.Children.Clear();
-        //         CustomCursor = Utils.GetCursor();
-        //         if (CustomCursor.Parent != null)
-        //         {
-        //             ((Canvas)CustomCursor.Parent).Children.Remove(CustomCursor);
-        //         }
-        //         CustomCursor.RenderTransform = new ScaleTransform(0.5, 0.5);
-        //         CustomCursor.Name = "customCursor";
-        //         mouseCursorCanvas.Children.Insert(0, CustomCursor); //in front!
-        //         CustomCursor.Visibility = Visibility.Hidden;
-        //     }
-        //     catch (System.NotSupportedException)
-        //     {
-        //         //we can die here if we ALT-F4 while in the Options Dialog
-        //     }
-        // }
-        //
+        /// <inheritdoc />
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
+        {
+            base.OnPointerReleased(e);
+            Controller.PointerReleased(e);
+        }
+
+        /// <inheritdoc />
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            base.OnPointerPressed(e);
+            Controller.PointerPressed(this, e);
+        }
+
+
+        /// <inheritdoc />
+        protected override void OnPointerEnter(PointerEventArgs e)
+        {
+            base.OnPointerEnter(e);
+            AssertCursor();
+            CustomCursor.IsVisible = true;
+        }
+
+        /// <inheritdoc />
+        protected override void OnPointerLeave(PointerEventArgs e)
+        {
+            base.OnPointerLeave(e);
+            Cursor = new Cursor(StandardCursorType.Arrow);
+            CustomCursor.IsVisible = false;
+        }
+
+        /// <inheritdoc />
+        protected override void OnPointerMoved(PointerEventArgs e)
+        {
+            base.OnPointerMoved(e);
+
+            // if (controller.isOptionsDialogShown == false)
+            // {
+            CustomCursor.IsVisible = true;
+            var p = e.GetPosition(mouseDragCanvas);
+            double pX = p.X;
+            double pY = p.Y;
+            Cursor = new Cursor(StandardCursorType.None);
+            Canvas.SetTop(CustomCursor, pY);
+            Canvas.SetLeft(CustomCursor, pX);
+            CustomCursor.ZIndex = int.MaxValue;
+            // }
+            Controller.PointerMove(this, e);
+        }
+
+        private void AssertCursor()
+        {
+            mouseCursorCanvas.Children.Clear();
+            CustomCursor = Utils.GetCursor();
+            ((Canvas) CustomCursor.Parent!)?.Children.Remove(CustomCursor);
+            CustomCursor.RenderTransform = new ScaleTransform(0.5, 0.5);
+            CustomCursor.Name = "customCursor";
+            mouseCursorCanvas.Children.Insert(0, CustomCursor); //in front!
+            CustomCursor.IsVisible = true;
+        }
     }
 }
