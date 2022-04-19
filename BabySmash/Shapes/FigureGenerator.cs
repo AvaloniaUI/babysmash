@@ -11,7 +11,9 @@ namespace BabySmash
     {
         public Brush Fill { get; set; }
         public Color Color { get; set; }
+
         public BrushControlFunc GeneratorFunc { get; set; }
+
         // public Effect Effect { get; set; }
         public string Name { get; set; }
         public string Letter { get; set; }
@@ -19,24 +21,25 @@ namespace BabySmash
 
     public class FigureGenerator
     {
-        private static readonly List<KeyValuePair<BabySmashShape, BrushControlFunc>> hashTableOfFigureGenerators = new List<KeyValuePair<BabySmashShape, BrushControlFunc>>
-             {
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Circle, x => new CoolCircle(x) ),
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Oval, x => new CoolOval(x) ),
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Rectangle, x => new CoolRectangle(x) ),
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Hexagon, x => new CoolHexagon(x) ),
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Trapezoid, x => new CoolTrapezoid(x) ),
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Star, x => new CoolStar(x) ),
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Square, x => new CoolSquare(x) ),
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Triangle, x => new CoolTriangle(x) ),
-                     new KeyValuePair<BabySmashShape, BrushControlFunc>(BabySmashShape.Heart, x => new CoolHeart(x) )
-             };
+        private static readonly List<KeyValuePair<BabySmashShape, BrushControlFunc>> hashTableOfFigureGenerators =
+            new List<KeyValuePair<BabySmashShape, BrushControlFunc>>
+            {
+                new(BabySmashShape.Circle, x => new CoolCircle(x)),
+                new(BabySmashShape.Oval, x => new CoolOval(x)),
+                new(BabySmashShape.Rectangle, x => new CoolRectangle(x)),
+                new(BabySmashShape.Hexagon, x => new CoolHexagon(x)),
+                new(BabySmashShape.Trapezoid, x => new CoolTrapezoid(x)),
+                new(BabySmashShape.Star, x => new CoolStar(x)),
+                new(BabySmashShape.Square, x => new CoolSquare(x)),
+                new(BabySmashShape.Triangle, x => new CoolTriangle(x)),
+                new(BabySmashShape.Heart, x => new CoolHeart(x))
+            };
 
         public static UserControl NewUserControlFrom(FigureTemplate template)
         {
-            UserControl retVal = null;
+            UserControl retVal;
 
-            if (template.Letter.Length == 1 && Char.IsLetterOrDigit(template.Letter[0]))
+            if (template.Letter.Length == 1 && char.IsLetterOrDigit(template.Letter[0]))
             {
                 retVal = new CoolLetter(template.Fill, template.Letter[0]);
             }
@@ -44,24 +47,6 @@ namespace BabySmash
             {
                 retVal = template.GeneratorFunc(template.Fill);
             }
-
-            // var randomTransition1 = (Tweener.TransitionType)Utils.RandomBetweenTwoNumbers(1, (int)Tweener.TransitionType.EaseOutInBounce);
-            // // var ani1 = Tweener.Tween.CreateAnimation(randomTransition1, 0, 1, new TimeSpan(0, 0, 0, 1), 30);
-            // var randomTransition2 = (Tweener.TransitionType)Utils.RandomBetweenTwoNumbers(1, (int)Tweener.TransitionType.EaseOutInBounce);
-            // var ani2 = Tweener.Tween.CreateAnimation(randomTransition2, 360, 0, new TimeSpan(0, 0, 0, 1), 30);
-            // retVal.RenderTransformOrigin = new Point(0.5, 0.5);
-            // var group = new TransformGroup();
-            // group.Children.Add(new ScaleTransform());
-            // group.Children.Add(new RotateTransform());
-            // retVal.RenderTransform = group;
-            // group.Children[0].BeginAnimation(ScaleTransform.ScaleXProperty, ani1);
-            // group.Children[0].BeginAnimation(ScaleTransform.ScaleYProperty, ani1);
-            // group.Children[1].BeginAnimation(RotateTransform.AngleProperty, ani2);
-            //
-            // if (Settings.Default.BitmapEffects)
-            // {
-            //     retVal.Effect = template.Effect.Clone();
-            // }
 
             return retVal;
         }
@@ -75,8 +60,9 @@ namespace BabySmash
             var c = Utils.GetRandomColor();
 
             string name = null;
-            var nameFunc = hashTableOfFigureGenerators[Utils.RandomBetweenTwoNumbers(0, hashTableOfFigureGenerators.Count - 1)];
-            if (Char.IsLetterOrDigit(displayChar))
+            var nameFunc =
+                hashTableOfFigureGenerators[Utils.RandomBetweenTwoNumbers(0, hashTableOfFigureGenerators.Count - 1)];
+            if (char.IsLetterOrDigit(displayChar))
             {
                 name = displayChar.ToString();
             }
