@@ -24,8 +24,16 @@ namespace BabySmash
 
         public WordFinder(string wordsFilePath)
         {
+
+
             // File path provided should be relative to our running location, so combine for full path safety.
-            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            // You should use AppContext.BaseDirectory on .NET 5 to get the truth
+            var basedir = Assembly.GetExecutingAssembly().Location;
+            if (string.IsNullOrEmpty(basedir))
+            {
+                basedir = AppContext.BaseDirectory;
+            }
+            var dir = Path.GetDirectoryName(basedir);
             wordsFilePath = Path.Combine(dir, wordsFilePath);
 
             StreamReader defaultSr;
