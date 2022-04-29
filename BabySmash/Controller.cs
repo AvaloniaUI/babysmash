@@ -107,12 +107,17 @@ namespace BabySmash
             Win32Audio.PlayWavResourceYield("EditedJackPlaysBabySmash.wav");
 
             var args = Environment.GetCommandLineArgs();
-            var ext = Path.GetExtension(Assembly.GetExecutingAssembly().CodeBase);
+            var assembly = Assembly.GetExecutingAssembly();
 
-            //if someone made us a screensaver, then don't show the options dialog.
-            if (args.Length != 0 && args[0] != "/s" && string.CompareOrdinal(ext, ".SCR") != 0)
+            if (!string.IsNullOrEmpty(assembly.Location))
             {
-                canShowDialog = true;
+                var ext = Path.GetExtension(assembly.CodeBase);
+
+                //if someone made us a screensaver, then don't show the options dialog.
+                if (args.Length != 0 && args[0] != "/s" && string.CompareOrdinal(ext, ".SCR") != 0)
+                {
+                    canShowDialog = true;
+                }
             }
 
             timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background,
