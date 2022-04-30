@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <NoWarn>$(NoWarn);NU1605</NoWarn>
+        <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
@@ -12,6 +14,10 @@
         <PublisherName>BabySmash</PublisherName>
         <ApplicationRevision>99</ApplicationRevision>
         <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+      <DebugType></DebugType>
     </PropertyGroup>
     <ItemGroup>
         <AvaloniaResource Include="Resources\**" />
